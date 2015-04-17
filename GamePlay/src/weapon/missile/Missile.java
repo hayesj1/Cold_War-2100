@@ -1,7 +1,6 @@
 package weapon.missile;
 
 import map.populationHub.PopulationHub;
-import player.Player;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
@@ -20,11 +19,10 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	protected PopulationHub target = null;
 	private int numMissiles = 0;
 
-	protected Missile (Player owner, MissileTypes missileType) { this(owner.getCapital(), missileType); }
-	protected Missile(PopulationHub homeBase, MissileTypes missileType) {
+	protected Missile(PopulationHub homeBase, IMissile missile) {
 		this.homeBase = homeBase;
 		this.pos = this.homeBase.getpos();
-		this.id = new MissileID(missileType, ++numMissiles);
+		this.id = new MissileID(MissileTypes.valueOf(missile.getClass().getName()), ++numMissiles);
 		if (allMissiles == null) {
 			allMissiles = new TreeMap<MissileID, IMissile>();
 		}
@@ -77,19 +75,21 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	}
 
 	public enum MissileTypes {
-		stdBMissile("Standard Bio Missile"),
-		stdNMissile("Standard Nuclear Misisle,"),
-		stdCMissile("Standard Concentration Misisle");
+		StdBMissile("Std B Missile"),
+		StdNMissile("Std N Missile,"),
+		StdCMissile("Std C Missile");
 
-		String type;
+		private String typeName;
 
 		private MissileTypes(String id) {
-			type = id;
+			typeName = id;
 		}
 		public MissileTypes parseStr(String type) {
 			String[] typeSplit = type.split(" ");
 			String typeNoSpaces = typeSplit.toString();
 			return MissileTypes.valueOf(typeNoSpaces);
 		}
+
+		public String getTypeName() { return this.typeName; }
 	}
 }
