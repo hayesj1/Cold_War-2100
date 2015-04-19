@@ -13,11 +13,17 @@ public abstract class ConcentrationMissile extends Missile {
         super(homebase, missile);
     }
 
+
+    @Override
+    public void applyEffect() {
+        //TODO apply shockwave to the terrain within the blast radius + tier.range
+    }
+
     public enum ConcentrationTiers{
         low(3.0, 0.25, ConcentrationType.mild),
-        std(5.0, 1.0, ConcentrationType.medium),
-        high(10.0, 1.25, ConcentrationType.deadly),
-        elite(20.0, 1.5, ConcentrationType.deadly);
+        std(4.0, 1.0, ConcentrationType.medium),
+        high(7.0, 1.25, ConcentrationType.deadly),
+        elite(10.0, 1.5, ConcentrationType.deadly);
 
         private double concenRange;
         private double concenDensity;

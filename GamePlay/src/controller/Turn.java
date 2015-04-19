@@ -18,7 +18,7 @@ public final class Turn {
 	private void doTurn () {
 		currTurn++;
 		for (Player p : Controller.getPlayers()) {
-			for (PopulationHub ph : Player.getPlayersPopHubs(p)) {
+			for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p)) {
 				ph.produce();
 			}
 		}

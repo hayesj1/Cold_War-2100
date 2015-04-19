@@ -13,6 +13,11 @@ public abstract class BioMissile extends Missile {
         super(homebase, missile);
     }
 
+    @Override
+    public void applyEffect() {
+        //TODO apply Bio taint to the terrain within the blast radius + tier.range
+    }
+
     public enum BioTiers{
         low(3.0, 0.25, BioType.mild),
         std(5.0, 1.0, BioType.medium),
