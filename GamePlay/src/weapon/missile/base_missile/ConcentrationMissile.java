@@ -1,7 +1,6 @@
 package weapon.missile.base_missile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.IMissile;
 import weapon.missile.Missile;
 
 /**
@@ -9,10 +8,11 @@ import weapon.missile.Missile;
  */
 public abstract class ConcentrationMissile extends Missile {
 
-    protected ConcentrationTiers BioTiers = null;
-    protected ConcentrationMissile(PopulationHub homebase, IMissile missile) {
+    protected ConcentrationTiers tier = null;
+    protected ConcentrationMissile(PopulationHub homebase, ConcentrationMissile missile) {
         super(homebase, missile);
     }
+
     public enum ConcentrationTiers{
         low(3.0, 0.25, ConcentrationType.mild),
         std(5.0, 1.0, ConcentrationType.medium),

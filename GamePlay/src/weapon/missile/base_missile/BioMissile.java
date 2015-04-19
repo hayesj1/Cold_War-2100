@@ -1,7 +1,6 @@
 package weapon.missile.base_missile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.IMissile;
 import weapon.missile.Missile;
 
 /**
@@ -9,10 +8,11 @@ import weapon.missile.Missile;
  */
 public abstract class BioMissile extends Missile {
 
-    protected BioTiers BioTiers = null;
-    protected BioMissile(PopulationHub homebase, IMissile missile) {
+    protected BioTiers tier = null;
+    protected BioMissile(PopulationHub homebase, BioMissile missile) {
         super(homebase, missile);
     }
+
     public enum BioTiers{
         low(3.0, 0.25, BioType.mild),
         std(5.0, 1.0, BioType.medium),

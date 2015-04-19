@@ -1,4 +1,4 @@
-package weapon.missile.std_missile;
+package weapon.missile.std_level_missile;
 
 import map.populationHub.PopulationHub;
 import player.Player;
@@ -10,8 +10,8 @@ import weapon.missile.base_missile.BioMissile;
  */
 public class StdBMissile extends BioMissile {
 
-	protected StdBMissile(Player owner, IMissile missile) { this(owner.getCapital(), missile); }
-	protected StdBMissile(PopulationHub homebase, IMissile missile) {
+	protected StdBMissile(Player owner, BioMissile missile) { this(owner.getCapital(), missile); }
+	protected StdBMissile(PopulationHub homebase, BioMissile missile) {
 		super(homebase, missile);
 	}
 

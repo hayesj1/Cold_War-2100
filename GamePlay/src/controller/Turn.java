@@ -6,7 +6,7 @@ import player.Player;
 /**
  * Created by hayesj3 on 4/13/2015.
  */
-public class Turn {
+public final class Turn {
 
 	private int maxTurn = 10;
 	private int currTurn = 0;

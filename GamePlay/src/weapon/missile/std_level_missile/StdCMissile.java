@@ -1,4 +1,4 @@
-package weapon.missile.std_missile;
+package weapon.missile.std_level_missile;
 
 import map.populationHub.PopulationHub;
 import player.Player;
@@ -10,8 +10,8 @@ import weapon.missile.base_missile.ConcentrationMissile;
  */
 public class StdCMissile extends ConcentrationMissile {
 
-    protected StdCMissile(Player owner, IMissile missile) { this(owner.getCapital(), missile); }
-    protected StdCMissile(PopulationHub homebase, IMissile missile) {
+    protected StdCMissile(Player owner, ConcentrationMissile missile) { this(owner.getCapital(), missile); }
+    protected StdCMissile(PopulationHub homebase, ConcentrationMissile missile) {
         super(homebase, missile);
     }
 

@@ -1,17 +1,20 @@
 package map.populationHub;
 
 import player.Player;
-import map.populationHub.EnumPopulationHub;
-import map.populationHub.IPopulationHub;
 import weapon.missile.Missile;
 
 import javax.vecmath.Point2d;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Created by hayesj3 on 4/16/2015.
  */
 
 public final class PopulationHub implements IPopulationHub {
+
+    private static TreeMap<Player, ArrayList<PopulationHub>> allPopHubs;
+
     private EnumPopulationHub size = null;
     private int pop = 0;
     private double missileProductionPerTurn = 0.0;
@@ -58,7 +61,13 @@ public final class PopulationHub implements IPopulationHub {
         return this.pop;
     }
 
-    public Point2d getpos() {
-        return this.pos;
+    public Point2d getpos() { return this.pos; }
+    public Player getOwner() { return this.owner; }
+    public static ArrayList<PopulationHub> getPlayersPopHubs (Player p) {
+        if (allPopHubs == null) {
+            allPopHubs = new TreeMap<Player, ArrayList<PopulationHub>>();
+        }
+        return allPopHubs.get(p);
     }
+
 }

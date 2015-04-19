@@ -1,7 +1,6 @@
 package weapon.missile.base_missile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.IMissile;
 import weapon.missile.Missile;
 
 /**
@@ -9,10 +8,11 @@ import weapon.missile.Missile;
  */
 public abstract class NuclearMissile extends Missile {
 
-    protected FalloutTiers falloutTier = null;
-    protected NuclearMissile(PopulationHub homebase, IMissile missile) {
+    protected FalloutTiers tier = null;
+    protected NuclearMissile(PopulationHub homebase, NuclearMissile missile) {
         super(homebase, missile);
     }
+
     public enum FalloutTiers{
         low(3.0, 0.25, FalloutType.mild),
         std(5.0, 1.0, FalloutType.medium),

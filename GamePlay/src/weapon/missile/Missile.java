@@ -1,35 +1,47 @@
 package weapon.missile;
 
+import controller.Controller;
 import map.populationHub.PopulationHub;
+import player.Player;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 public abstract class Missile implements IMissile, Comparable<Missile> {
 
-	private static TreeMap<MissileID, IMissile> allMissiles = null;
+	private static TreeMap<MissileID, IMissile> allMissilesByID = null;
+	private static TreeMap<Player, ArrayList<IMissile>> allMissilesByPlayer = null;
+	private static int numMissiles = 0;
+
 	protected MissileID id = null;
 	protected double maxRange = 0.0;
 	protected double rangePerTurn = 0.0;
 	protected double fearEffect = -1.0;
 	protected double blastRadius = 0.0;
+
 	protected Point2d pos = null;
 	protected PopulationHub homeBase = null;
 	protected PopulationHub target = null;
-	private int numMissiles = 0;
 
 	protected Missile(PopulationHub homeBase, IMissile missile) {
 		this.homeBase = homeBase;
 		this.pos = this.homeBase.getpos();
 		this.id = new MissileID(MissileTypes.valueOf(missile.getClass().getName()), ++numMissiles);
-		if (allMissiles == null) {
-			allMissiles = new TreeMap<MissileID, IMissile>();
+		if (allMissilesByID == null) {
+			allMissilesByID = new TreeMap<MissileID, IMissile>();
 		}
-		allMissiles.put(this.id, this);
+		allMissilesByID.put(this.id, this);
+		if (allMissilesByPlayer == null) {
+			allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
+			for (Player p : Controller.getPlayers())
+				allMissilesByPlayer.put(p, new ArrayList<>(0));
+		}
+		allMissilesByPlayer.get(homeBase.getOwner()).add(missile);
 	}
 
-	public static TreeMap<MissileID, IMissile> getAllMissiles () { return allMissiles; }
+	public static TreeMap<MissileID, IMissile> getAllMissiles () { return allMissilesByID; }
 
 	@Override
 	public MissileID getID() { return this.id; }
