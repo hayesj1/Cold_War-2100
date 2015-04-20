@@ -16,4 +16,9 @@ public class Player {
 	}
 
 	public PopulationHub getCapital () { return this.capital; }
+
+	@Override
+	public String toString() {
+		return (playerName + "'s ID: " + playerID);
+	}
 }

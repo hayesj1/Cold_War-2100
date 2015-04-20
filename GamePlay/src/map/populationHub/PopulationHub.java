@@ -21,13 +21,14 @@ public final class PopulationHub implements IPopulationHub {
     private double missileProduction = 0.0;
     private double nationalPride = 0.0;
     private double fearAmount;
-    private Player owner;
-    private Point2d pos;
+
+    private String cityName = "";
+    private Player owner = null;
+    private Point2d pos = null;
 
     public PopulationHub(Player founder, Point2d pos) {
         this.fearAmount = 1.125 * (double)this.pop;
-        this.owner = null;
-        this.pos = null;
+        this.cityName = "Boberto";
         this.owner = founder;
         this.size = EnumPopulationHub.hamlet;
         this.pop = this.size.getMinPop();
@@ -70,4 +71,8 @@ public final class PopulationHub implements IPopulationHub {
         return allPopHubs.get(p);
     }
 
+    @Override
+    public String toString() {
+        return (cityName + " owned by " + owner);
+    }
 }

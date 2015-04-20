@@ -13,15 +13,29 @@ public final class Turn {
 
 	private static Turn instance = null;
 
-	private Turn () {}
+	private Turn () {
+		for (int i = 0; i < Controller.getInstance().getNumActivePlayers(); i++) {
+			
+		}
+		this.doTurn();
+	}
 
-	private void doTurn () {
+	/**
+	 * starts a turn, and at the end calls itself; this way the game is in one recursive fucntion
+	 * @return true when a player wins, false if there is a tie and the max turns is reached
+	 */
+	private boolean doTurn () {
+		if(currTurn == maxTurn)
+			return false;
+
 		currTurn++;
 		for (Player p : Controller.getPlayers()) {
 			for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p)) {
 				ph.produce();
+				System.out.println(ph + " is owned by " + ph.getOwner());
 			}
 		}
+		return this.doTurn();
 	}
 
 	public static Turn getInstance () {

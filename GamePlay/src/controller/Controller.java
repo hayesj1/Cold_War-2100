@@ -16,7 +16,7 @@ public final class Controller {
 	private Controller (int initalPlayers) {
 		this.numActivePlayers = initalPlayers;
 		players = new ArrayList<Player>(initalPlayers + 1);
-
+		Controller.getTurnInstance();
 	}
 
 	/**
@@ -40,6 +40,7 @@ public final class Controller {
 
 	public static Controller getInstance() {
 		if (instance == null) {
+			//TODO ask the user for the number of players
 			instance = new Controller();
 		}
 		return instance;
@@ -50,4 +51,5 @@ public final class Controller {
 		}
 		return turnInstance;
 	}
+	public int getNumActivePlayers() { return numActivePlayers; }
 }
