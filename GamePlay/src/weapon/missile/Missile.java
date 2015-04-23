@@ -16,6 +16,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	private static int numMissiles = 0;
 
 	protected MissileID id = null;
+
 	protected double maxRange = 0.0;
 	protected double rangePerTurn = 0.0;
 	protected double fearEffect = -1.0;
@@ -23,25 +24,34 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 
 	protected Point2d pos = null;
 	protected PopulationHub homeBase = null;
+
 	protected PopulationHub target = null;
+	protected Vector2d path = null;
+	protected Vector2d segment = null;
 
 	protected Missile(PopulationHub homeBase, IMissile missile) {
 		this.homeBase = homeBase;
 		this.pos = this.homeBase.getpos();
 		this.id = new MissileID(MissileTypes.valueOf(missile.getClass().getName()), ++numMissiles);
+		getAllMissilesByID().put(this.id, this);
+		getAllMissilesByPlayer().get(homeBase.getOwner()).add(missile);
+	}
+
+	public static TreeMap<MissileID, IMissile> getAllMissilesByID() {
 		if (allMissilesByID == null) {
 			allMissilesByID = new TreeMap<MissileID, IMissile>();
 		}
-		allMissilesByID.put(this.id, this);
+		return allMissilesByID;
+	}
+
+	public static TreeMap<Player, ArrayList<IMissile>> getAllMissilesByPlayer() {
 		if (allMissilesByPlayer == null) {
-			allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
+		allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
 			for (Player p : Controller.getPlayers())
 				allMissilesByPlayer.put(p, new ArrayList<>(0));
 		}
-		allMissilesByPlayer.get(homeBase.getOwner()).add(missile);
+		return allMissilesByPlayer;
 	}
-
-	public static TreeMap<MissileID, IMissile> getAllMissiles () { return allMissilesByID; }
 
 	@Override
 	public MissileID getID() { return this.id; }
@@ -56,11 +66,16 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 
 	@Override
 	public Vector2d launch (PopulationHub target) {
-		target.targettedByMissle(this);
-		return (new Vector2d(target.getpos().getX(), target.getpos().getY()));
+		this.target = target;
+		this.target.targettedByMissle(this);
+		this.path = new Vector2d(target.getpos().getX(), target.getpos().getY());
+		double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
+		double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
+		this.segment = new Vector2d(rangeX, rangeY);
+		return this.segment;
 	}
 	@Override
-	public Point2d travel() { pos.scale(rangePerTurn); return pos; }
+	public Point2d travel() { this.pos.add(this.segment); return pos; }
 	@Override
 	public PopulationHub move(PopulationHub newHomeBase) { this.homeBase = newHomeBase; this.pos = homeBase.getpos(); return this.homeBase; }
 

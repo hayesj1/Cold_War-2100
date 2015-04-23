@@ -1,5 +1,6 @@
 package map.populationHub;
 
+import controller.Controller;
 import player.Player;
 import weapon.missile.Missile;
 
@@ -16,11 +17,12 @@ public final class PopulationHub implements IPopulationHub {
     private static TreeMap<Player, ArrayList<PopulationHub>> allPopHubs;
 
     private EnumPopulationHub size = null;
+    private EnumPopulationHub nextSize = null;
     private int pop = 0;
     private double missileProductionPerTurn = 0.0;
     private double missileProduction = 0.0;
     private double nationalPride = 0.0;
-    private double fearAmount;
+    private double fearAmount = 0.0;
 
     private String cityName = "";
     private Player owner = null;
@@ -30,12 +32,18 @@ public final class PopulationHub implements IPopulationHub {
         this.fearAmount = 1.125 * (double)this.pop;
         this.cityName = "Boberto";
         this.owner = founder;
-        this.size = EnumPopulationHub.hamlet;
+        this.pos = pos;
+
+        if (founder.getCapital() == null) {
+            this.size = EnumPopulationHub.town;
+        } else {
+            this.size = EnumPopulationHub.hamlet;
+        }
+        this.nextSize = EnumPopulationHub.values()[this.size.ordinal() + 1];
+        System.out.println(this.cityName + " is of size " + this.size);
         this.pop = this.size.getMinPop();
         this.missileProductionPerTurn = this.size.getMissileProdPerTurn();
-        this.fearAmount = 0.0;
-        this.nationalPride = 0.0;
-        this.pos = pos;
+        getPlayersPopHubs(founder).add(this);
     }
     @Override
     public void produce () {
@@ -54,11 +62,9 @@ public final class PopulationHub implements IPopulationHub {
     }
     public int populationChange(int change) {
         this.pop += change;
-        if(this.size.compareTo(EnumPopulationHub.metropolis) != 0 && this.pop >= EnumPopulationHub.values()[this.size.ordinal() + 1].getMinPop()) {
-            ;
-        }
-
-        this.size = EnumPopulationHub.values()[this.size.ordinal() + 1];
+        if(this.size.compareTo(EnumPopulationHub.metropolis) < 0 && this.pop >= this.nextSize.getMinPop()) {
+            this.size = this.nextSize;
+            this.nextSize = EnumPopulationHub.values()[this.size.ordinal() + 1];}
         return this.pop;
     }
 
@@ -67,12 +73,16 @@ public final class PopulationHub implements IPopulationHub {
     public static ArrayList<PopulationHub> getPlayersPopHubs (Player p) {
         if (allPopHubs == null) {
             allPopHubs = new TreeMap<Player, ArrayList<PopulationHub>>();
+            for (Player player : Controller.getPlayers()) {
+                if (player == null) { break; }
+                allPopHubs.put(player, new ArrayList<>(2));
+            }
         }
         return allPopHubs.get(p);
     }
 
     @Override
     public String toString() {
-        return (cityName + " owned by " + owner);
+        return (cityName);
     }
 }
