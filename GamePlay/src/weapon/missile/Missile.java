@@ -3,6 +3,7 @@ package weapon.missile;
 import controller.Controller;
 import map.populationHub.PopulationHub;
 import player.Player;
+import weapon.missile.intercept_missile.InterceptMissile;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
@@ -28,6 +29,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	protected PopulationHub target = null;
 	protected Vector2d path = null;
 	protected Vector2d segment = null;
+	protected Integer turnsToStrike = null;
 
 	protected Missile(PopulationHub homeBase, IMissile missile) {
 		this.homeBase = homeBase;
@@ -63,22 +65,61 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	public double getBlastRadius() { return this.blastRadius; }
 	@Override
 	public double getFearEffect() { return this.fearEffect; }
+	public Point2d getPos() { return this.pos; }
+	public Vector2d getSegment() { return this.segment; }
 
 	@Override
-	public Vector2d launch (PopulationHub target) {
+	public int launch (PopulationHub target) {
 		this.target = target;
 		this.target.targettedByMissle(this);
+		this.turnsToStrike = this.calcRoute(this.target);
+		return this.turnsToStrike;
+	}
+	@Override
+	public int travel() {
+		if (this.pos.equals(this.target.getpos())) {
+			this.strike();
+		}
+		this.pos.add(this.segment);
+		return this.turnsToStrike--;
+	}
+	@Override
+	public PopulationHub move(PopulationHub newHomeBase) { this.homeBase = newHomeBase; this.pos = homeBase.getpos(); return this.homeBase; }
+
+	/** deletes the current missile from all data structures holding missiles; call at the very end of any overrides */
+	@Override
+	public void strike() {
+		allMissilesByID.remove(this.id);
+		allMissilesByPlayer.get(this.homeBase.getOwner()).remove(this);
+	}
+
+	/** deletes the current and the intercepting missiles from all data structures holding missiles; call at the very end of any overrides */
+	@Override
+	public void intercepted(InterceptMissile interceptor) {
+		allMissilesByID.remove(this.id);
+		allMissilesByPlayer.get(this.homeBase.getOwner()).remove(this);
+		allMissilesByID.remove(interceptor.id);
+		allMissilesByPlayer.get(this.homeBase.getOwner()).remove(interceptor);
+	}
+
+	protected int calcRoute(PopulationHub target) {
 		this.path = new Vector2d(target.getpos().getX(), target.getpos().getY());
 		double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
 		double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
 		this.segment = new Vector2d(rangeX, rangeY);
-		return this.segment;
+		return this.calcTurnsToStrike();
 	}
-	@Override
-	public Point2d travel() { this.pos.add(this.segment); return pos; }
-	@Override
-	public PopulationHub move(PopulationHub newHomeBase) { this.homeBase = newHomeBase; this.pos = homeBase.getpos(); return this.homeBase; }
-
+	protected int calcRoute(Missile target) {
+		this.path = new Vector2d(target.pos.getX(), target.pos.getY());
+		double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
+		double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
+		this.segment = new Vector2d(rangeX, rangeY);
+		return this.calcTurnsToStrike();
+	}
+	protected int calcTurnsToStrike() {
+		this.turnsToStrike = Integer.valueOf((int) (Math.ceil(this.path.length() / this.segment.length())));
+		return turnsToStrike;
+	}
 	@Override
 	public int compareTo(Missile other) {
 		int strSorting = this.id.getID().toString().compareToIgnoreCase(other.id.getID().toString());

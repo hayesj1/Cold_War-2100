@@ -2,9 +2,7 @@ package weapon.missile;
 
 import map.populationHub.PopulationHub;
 import weapon.missile.Missile.MissileID;
-
-import javax.vecmath.Point2d;
-import javax.vecmath.Vector2d;
+import weapon.missile.intercept_missile.InterceptMissile;
 
 public interface IMissile {
 
@@ -14,8 +12,8 @@ public interface IMissile {
     double getBlastRadius();
     double getFearEffect();
 
-    Vector2d launch(PopulationHub target);
-    Point2d travel();
+    int launch(PopulationHub target);
+    int travel();
     PopulationHub move(PopulationHub newBase);
 
     /** applies the effect of the misisle */
@@ -24,6 +22,6 @@ public interface IMissile {
     void strike();
     /** called when missile has been intercepted by another missile; both missiles should be removed from any data structures keeping track of all missiles;
      * call applyEffect() on both missiles*/
-    void intercepted(IMissile inteceptor);
+    void intercepted(InterceptMissile inteceptor);
 }
 
