@@ -230,3 +230,6 @@ pip-log.txt
 .idea/modules.xml
 .idea/libraries/vecmath_1_5_2.xml
 .idea/uiDesigner.xml
+production/temp_resources/missile 1.jpg
+production/temp_resources/missile 3.png
+production/temp_resources/missile 2.png
