@@ -1,7 +1,6 @@
-package weapon.missile.intercept_missile;
+package weapon.missile.baseMissile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.Missile;
 
 import javax.vecmath.Tuple2d;
 import javax.vecmath.Vector2d;

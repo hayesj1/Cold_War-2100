@@ -2,8 +2,8 @@ package controller;
 
 import map.populationHub.PopulationHub;
 import player.Player;
-import weapon.missile.IMissile;
-import weapon.missile.Missile;
+import weapon.missile.baseMissile.IMissile;
+import weapon.missile.baseMissile.Missile;
 
 /**
  * Created by hayesj3 on 4/13/2015.

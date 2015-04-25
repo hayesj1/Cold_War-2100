@@ -1,6 +1,6 @@
 package map.populationHub;
 
-import weapon.missile.Missile;
+import weapon.missile.baseMissile.Missile;
 
 interface IPopulationHub {
 	double hamletMissileProdPerTurn = 0.05;

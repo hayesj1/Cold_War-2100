@@ -1,15 +1,19 @@
-package weapon.missile.base_missile;
+package weapon.missile.strikeMissile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.Missile;
+import player.Player;
+import weapon.missile.baseMissile.Missile;
 
 /**
  * Created by hayesj3 on 4/13/2015.
  */
-public abstract class NuclearMissile extends Missile {
+public class NuclearMissile extends Missile {
 
     protected FalloutTiers tier = null;
-    protected NuclearMissile(PopulationHub homebase, NuclearMissile missile) {
+    public NuclearMissile(Player owner, NuclearMissile missile) {
+        this(owner.getCapital(), missile);
+    }
+    public NuclearMissile(PopulationHub homebase, NuclearMissile missile) {
         super(homebase, missile);
     }
 

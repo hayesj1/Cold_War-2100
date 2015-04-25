@@ -2,7 +2,7 @@ package map.populationHub;
 
 import controller.Controller;
 import player.Player;
-import weapon.missile.Missile;
+import weapon.missile.baseMissile.Missile;
 
 import javax.vecmath.Point2d;
 import java.util.ArrayList;

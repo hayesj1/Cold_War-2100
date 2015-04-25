@@ -1,8 +1,7 @@
-package weapon.missile;
+package weapon.missile.baseMissile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.Missile.MissileID;
-import weapon.missile.intercept_missile.InterceptMissile;
+import weapon.missile.baseMissile.Missile.MissileID;
 
 public interface IMissile {
 

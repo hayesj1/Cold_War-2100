@@ -1,15 +1,17 @@
-package weapon.missile.base_missile;
+package weapon.missile.strikeMissile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.Missile;
+import player.Player;
+import weapon.missile.baseMissile.Missile;
 
 /**
  * Created by hayesj3 on 4/13/2015.
  */
-public abstract class BioMissile extends Missile {
+public class BioMissile extends Missile {
 
     protected BioTiers tier = null;
-    protected BioMissile(PopulationHub homebase, BioMissile missile) {
+    public BioMissile(Player owner, BioMissile missile) { this(owner.getCapital(), missile); }
+    public BioMissile(PopulationHub homebase, BioMissile missile) {
         super(homebase, missile);
     }
 

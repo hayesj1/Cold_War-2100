@@ -1,15 +1,17 @@
-package weapon.missile.base_missile;
+package weapon.missile.strikeMissile;
 
 import map.populationHub.PopulationHub;
-import weapon.missile.Missile;
+import player.Player;
+import weapon.missile.baseMissile.Missile;
 
 /**
  * Created by hayesj3 on 4/13/2015.
  */
-public abstract class ConcentrationMissile extends Missile {
+public class ConcentrationMissile extends Missile {
 
     protected ConcentrationTiers tier = null;
-    protected ConcentrationMissile(PopulationHub homebase, ConcentrationMissile missile) {
+    public ConcentrationMissile(Player owner, ConcentrationMissile missile) { this(owner.getCapital(), missile); }
+    public ConcentrationMissile(PopulationHub homebase, ConcentrationMissile missile) {
         super(homebase, missile);
     }
 

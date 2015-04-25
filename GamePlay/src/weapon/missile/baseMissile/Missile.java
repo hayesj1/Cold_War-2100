@@ -1,9 +1,8 @@
-package weapon.missile;
+package weapon.missile.baseMissile;
 
 import controller.Controller;
 import map.populationHub.PopulationHub;
 import player.Player;
-import weapon.missile.intercept_missile.InterceptMissile;
 
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
