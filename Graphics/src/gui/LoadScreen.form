@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="gui.LoadScreen">
+  <grid id="cbd77" binding="contentPane" layout-manager="GridBagLayout">
+    <constraints>
+      <xy x="48" y="54" width="1307" height="415"/>
+    </constraints>
+    <properties>
+      <enabled value="true"/>
+      <font name="Dialog"/>
+      <foreground color="-1"/>
+      <inheritsPopupMenu value="true"/>
+      <maximumSize width="1307" height="256"/>
+      <minimumSize width="1307" height="256"/>
+      <toolTipText value=""/>
+    </properties>
+    <clientProperties>
+      <html.disable class="java.lang.Boolean" value="false"/>
+    </clientProperties>
+    <border type="none"/>
+    <children>
+      <grid id="94766" binding="loadingStuff" layout-manager="GridBagLayout">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="1" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+          <gridbag weightx="1.0" weighty="0.0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <component id="26097" class="javax.swing.JLabel">
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <horizontalAlignment value="0"/>
+              <horizontalTextPosition value="0"/>
+              <text value="Loading..."/>
+            </properties>
+          </component>
+          <component id="e7a4b" class="javax.swing.JProgressBar" binding="loadingBar">
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+              <gridbag weightx="0.0" weighty="0.0"/>
+            </constraints>
+            <properties>
+              <background color="-16777216"/>
+              <borderPainted value="true"/>
+              <enabled value="true"/>
+              <font name="Arial Black" style="1"/>
+              <foreground color="-16733953"/>
+              <indeterminate value="true"/>
+              <orientation value="0"/>
+              <string value="Loading" noi18n="true"/>
+              <stringPainted value="true"/>
+              <toolTipText value="Loading"/>
+            </properties>
+          </component>
+        </children>
+      </grid>
+      <grid id="e3588" binding="mainWindow" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
+            <minimum-size width="1307" height="256"/>
+            <preferred-size width="1307" height="256"/>
+            <maximum-size width="1307" height="256"/>
+          </grid>
+          <gridbag weightx="1.0" weighty="1.0"/>
+        </constraints>
+        <properties/>
+        <border type="none"/>
+        <children/>
+      </grid>
+    </children>
+  </grid>
+</form>

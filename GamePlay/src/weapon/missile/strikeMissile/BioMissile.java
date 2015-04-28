@@ -10,10 +10,8 @@ import weapon.missile.baseMissile.Missile;
 public class BioMissile extends Missile {
 
     protected BioTiers tier = null;
-    public BioMissile(Player owner, BioMissile missile) { this(owner.getCapital(), missile); }
-    public BioMissile(PopulationHub homebase, BioMissile missile) {
-        super(homebase, missile);
-    }
+    public BioMissile(Player owner) { this(owner.getCapital()); }
+    public BioMissile(PopulationHub homebase) { super(homebase, MissileTypes.BioMissile); }
 
     @Override
     public void applyEffect() {

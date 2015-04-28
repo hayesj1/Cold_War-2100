@@ -9,11 +9,11 @@ import weapon.missile.baseMissile.InterceptMissile;
  */
 public class BioInterMissile extends InterceptMissile {
 
-    public BioInterMissile(Player owner, BioInterMissile missile) {
-        this(owner.getCapital(), missile);
+    public BioInterMissile(Player owner) {
+        this(owner.getCapital());
     }
-    public BioInterMissile(PopulationHub homebase, BioInterMissile missile) {
-        super(homebase, missile);
+    public BioInterMissile(PopulationHub homebase) {
+        super(homebase, MissileTypes.BioInterMissile);
     }
     @Override
     public void applyEffect() {

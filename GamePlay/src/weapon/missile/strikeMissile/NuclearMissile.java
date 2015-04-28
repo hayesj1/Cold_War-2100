@@ -10,12 +10,10 @@ import weapon.missile.baseMissile.Missile;
 public class NuclearMissile extends Missile {
 
     protected FalloutTiers tier = null;
-    public NuclearMissile(Player owner, NuclearMissile missile) {
-        this(owner.getCapital(), missile);
+    public NuclearMissile(Player owner) {
+        this(owner.getCapital());
     }
-    public NuclearMissile(PopulationHub homebase, NuclearMissile missile) {
-        super(homebase, missile);
-    }
+    public NuclearMissile(PopulationHub homebase) { super(homebase, MissileTypes.NuclearMissile); }
 
     @Override
     public void applyEffect() {

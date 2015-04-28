@@ -1,9 +1,13 @@
 package controller;
 
+import gui.AttackPopHubScreen;
 import map.populationHub.PopulationHub;
 import player.Player;
+import resource.Resources;
 import weapon.missile.baseMissile.IMissile;
 import weapon.missile.baseMissile.Missile;
+
+import javax.swing.*;
 
 /**
  * Created by hayesj3 on 4/13/2015.
@@ -30,20 +34,31 @@ public final class Turn {
 			return false;
 
 		currTurn++;
+	// start the turn
+		for (Player p : Controller.getPlayers()) {
+			// missile production
+			for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p)) {
+				ph.produce();
+				System.out.println(ph + " is owned by " + ph.getOwner());
+			}
+			// launch attack(s)
+			int choice = -1;
+			do {
+				choice = JOptionPane.showConfirmDialog(null, "Would you like to attack?", "Attack Phase",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Resources.iconII);
+				if (choice == JOptionPane.NO_OPTION) { break; }
+				else {
+					new AttackPopHubScreen(p);
+				}
+			} while (true);
+		}
+	// end the turn
 		// missile movement
 		for (IMissile m : Missile.getAllMissilesByID().values()) {
-			if( m == null) { break; }
-			m.travel();
-		}
-
-		// missile production
-		{
-			for (Player p : Controller.getPlayers()) {
-				for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p)) {
-					ph.produce();
-					System.out.println(ph + " is owned by " + ph.getOwner());
-				}
+			if (m == null) {
+				break;
 			}
+			m.travel();
 		}
 		return this.doTurn();
 	}

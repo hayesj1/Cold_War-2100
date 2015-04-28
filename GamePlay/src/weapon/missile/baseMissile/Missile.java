@@ -30,12 +30,12 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	protected Vector2d segment = null;
 	protected Integer turnsToStrike = null;
 
-	protected Missile(PopulationHub homeBase, IMissile missile) {
+	protected Missile(PopulationHub homeBase, MissileTypes type) {
 		this.homeBase = homeBase;
 		this.pos = this.homeBase.getpos();
-		this.id = new MissileID(MissileTypes.valueOf(missile.getClass().getName()), ++numMissiles);
+		this.id = new MissileID(type, ++numMissiles);
 		getAllMissilesByID().put(this.id, this);
-		getAllMissilesByPlayer().get(homeBase.getOwner()).add(missile);
+		getAllMissilesByPlayer(homeBase.getOwner()).add(this);
 	}
 
 	public static TreeMap<MissileID, IMissile> getAllMissilesByID() {
@@ -45,13 +45,13 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		return allMissilesByID;
 	}
 
-	public static TreeMap<Player, ArrayList<IMissile>> getAllMissilesByPlayer() {
+	public static ArrayList<IMissile> getAllMissilesByPlayer(Player player) {
 		if (allMissilesByPlayer == null) {
-		allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
+			allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
 			for (Player p : Controller.getPlayers())
 				allMissilesByPlayer.put(p, new ArrayList<>(0));
 		}
-		return allMissilesByPlayer;
+		return allMissilesByPlayer.get(player);
 	}
 
 	@Override
@@ -64,6 +64,10 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	public double getBlastRadius() { return this.blastRadius; }
 	@Override
 	public double getFearEffect() { return this.fearEffect; }
+	@Override
+	public PopulationHub getHomeBase() { return this.homeBase; }
+	@Override
+	public PopulationHub getTarget() { return this.target; }
 	public Point2d getPos() { return this.pos; }
 	public Vector2d getSegment() { return this.segment; }
 
@@ -83,7 +87,13 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		return this.turnsToStrike--;
 	}
 	@Override
-	public PopulationHub move(PopulationHub newHomeBase) { this.homeBase = newHomeBase; this.pos = homeBase.getpos(); return this.homeBase; }
+	public PopulationHub move(PopulationHub newHomeBase) {
+		this.homeBase.getMissilesBasedHere().remove(this);
+		this.homeBase = newHomeBase;
+		this.pos = homeBase.getpos();
+		this.homeBase.getMissilesBasedHere().add(this);
+		return newHomeBase;
+	}
 
 	/** deletes the current missile from all data structures holding missiles; call at the very end of any overrides */
 	@Override
@@ -124,39 +134,41 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		int strSorting = this.id.getID().toString().compareToIgnoreCase(other.id.getID().toString());
 		return ((strSorting == 0) ? this.id.getMissileNumber().compareTo(other.id.getMissileNumber()) : strSorting);
 	}
+	@Override
+	public String toString() { return this.id.toString(); }
 
 	final static class MissileID {
 		private MissileTypes ID = null;
 		private int missileNumber = -1;
 
-		public MissileID(String id, int number) {
-			this.ID = MissileTypes.valueOf(id);
-			this.missileNumber = number;
-		}
 		public MissileID(MissileTypes id, int number) {
 			this.ID = id;
 			this.missileNumber = number;
 		}
 		public MissileTypes getID() { return this.ID; }
 		public Integer getMissileNumber() { return this.missileNumber; }
+		@Override
+		public String toString() { return (this.ID.toString() + " #" + this.missileNumber ); }
 	}
 
 	public enum MissileTypes {
-		StdBMissile("Std B Missile"),
-		StdNMissile("Std N Missile,"),
-		StdCMissile("Std C Missile");
+		BioMissile("Bio Missile"),
+		NuclearMissile("Nuclear Missile,"),
+		ConcentrationMissile("Concentration Missile"),
+
+		BioInterMissile("Bio Interception Missile"),
+		NuclearInterMissile("Nuclear Interception Missile,"),
+		ConcentrationInterMissile("Concentration Interception Missile");
 
 		private String typeName;
 
 		private MissileTypes(String id) {
 			typeName = id;
 		}
-		public MissileTypes parseStr(String type) {
-			String[] typeSplit = type.split(" ");
-			String typeNoSpaces = typeSplit.toString();
-			return MissileTypes.valueOf(typeNoSpaces);
-		}
-
 		public String getTypeName() { return this.typeName; }
+		@Override
+		public String toString() {
+			return this.typeName;
+		}
 	}
 }

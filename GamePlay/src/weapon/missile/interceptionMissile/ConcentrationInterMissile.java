@@ -9,10 +9,8 @@ import weapon.missile.baseMissile.InterceptMissile;
  */
 public class ConcentrationInterMissile extends InterceptMissile {
 
-    public ConcentrationInterMissile(Player owner, ConcentrationInterMissile missile) {
-        this(owner.getCapital(), missile);
-    }
-    public ConcentrationInterMissile(PopulationHub homebase, ConcentrationInterMissile missile) { super(homebase, missile); }
+    public ConcentrationInterMissile(Player owner) { this(owner.getCapital()); }
+    public ConcentrationInterMissile(PopulationHub homebase) { super(homebase, MissileTypes.ConcentrationInterMissile); }
 
     @Override
     public void applyEffect() {

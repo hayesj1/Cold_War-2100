@@ -11,8 +11,8 @@ import javax.vecmath.Vector2d;
 public abstract class InterceptMissile extends Missile {
 
     Integer turnsToIntercept = null;
-    protected InterceptMissile(PopulationHub homeBase, InterceptMissile missile) {
-        super(homeBase, missile);
+    protected InterceptMissile(PopulationHub homeBase, MissileTypes type) {
+        super(homeBase, type);
     }
 
     protected int intercept(Missile target) {

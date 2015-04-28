@@ -9,11 +9,11 @@ import weapon.missile.baseMissile.InterceptMissile;
  */
 public class NuclearInterMissile extends InterceptMissile {
 
-    public NuclearInterMissile(Player owner, NuclearInterMissile missile) {
-        this(owner.getCapital(), missile);
+    public NuclearInterMissile(Player owner) {
+        this(owner.getCapital());
     }
-    public NuclearInterMissile(PopulationHub homebase, NuclearInterMissile missile) {
-        super(homebase, missile);
+    public NuclearInterMissile(PopulationHub homebase) {
+        super(homebase, MissileTypes.NuclearInterMissile);
     }
 
     @Override

@@ -10,10 +10,8 @@ import weapon.missile.baseMissile.Missile;
 public class ConcentrationMissile extends Missile {
 
     protected ConcentrationTiers tier = null;
-    public ConcentrationMissile(Player owner, ConcentrationMissile missile) { this(owner.getCapital(), missile); }
-    public ConcentrationMissile(PopulationHub homebase, ConcentrationMissile missile) {
-        super(homebase, missile);
-    }
+    public ConcentrationMissile(Player owner) { this(owner.getCapital()); }
+    public ConcentrationMissile(PopulationHub homebase) { super(homebase, MissileTypes.ConcentrationMissile); }
 
 
     @Override
