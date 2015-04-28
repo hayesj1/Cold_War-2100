@@ -232,3 +232,11 @@ pip-log.txt
 production/temp_resources/missile 1.jpg
 production/temp_resources/missile 3.png
 production/temp_resources/missile 2.png
+.idea/dictionaries/hayesj3.xml
+*.js
+*.gif
+lib/image4j/docs/javadocs/package-list
+*.css
+*.html
+lib/image4j/docs/javadocs/javadoc/package-list
+.idea/libraries/image4j.xml
