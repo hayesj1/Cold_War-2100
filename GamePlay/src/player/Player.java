@@ -30,6 +30,7 @@ public class Player implements Comparable<Player>{
 	public void setName(String newName) { this.playerName = newName; }
 	public PopulationHub getCapital () { return this.capital; }
 	public void setCapital(PopulationHub newCapital) { this.capital = newCapital; }
+	public EnumEmpires getAllegiance() { return this.allegiance; }
 
 	public ArrayList<PopulationHub> getOwnedCities() {
 		if (this.ownedCities == null) {

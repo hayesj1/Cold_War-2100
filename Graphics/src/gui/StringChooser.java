@@ -1,5 +1,7 @@
 package gui;
 
+import player.Player;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -14,8 +16,13 @@ public class StringChooser extends JDialog {
     private JButton buttonOK;
 
     private String destination = "";
+    private Player activePlayer = null;
+    private StringChooserTypes type = null;
 
-    public StringChooser() {
+    public StringChooser(Player activePlayer, StringChooserTypes type) {
+        this.activePlayer = activePlayer;
+        this.type = type;
+        this.setTitle(this.type.getTitle());
 
         buttonOK.addActionListener(new ActionListener() {
             @Override
@@ -43,7 +50,8 @@ public class StringChooser extends JDialog {
                 onCancel();
             }
         });
-
+        this.pack();
+        this.setVisible(true);
     }
 
     private void onOK() {
@@ -56,4 +64,9 @@ public class StringChooser extends JDialog {
     }
 
     public String getValue() { return this.destination; }
+
+    private void createUIComponents() {
+        this.chooseLabel = new JLabel(this.type.getMessage());
+        this.choose.setText(this.type.getDefaultTextForPlayer(this.activePlayer));
+    }
 }
