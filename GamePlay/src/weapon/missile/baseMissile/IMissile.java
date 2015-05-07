@@ -10,6 +10,7 @@ public interface IMissile {
     double getRangePerTurn();
     double getBlastRadius();
     double getFearEffect();
+    boolean isLaunched();
     PopulationHub getHomeBase();
     PopulationHub getTarget();
 

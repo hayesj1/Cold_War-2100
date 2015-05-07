@@ -15,6 +15,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	private static TreeMap<Player, ArrayList<IMissile>> allMissilesByPlayer = null;
 	private static int numMissiles = 0;
 
+	private boolean isLaunched = false;
 	protected MissileID id = null;
 
 	protected double maxRange = 0.0;
@@ -44,14 +45,18 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		}
 		return allMissilesByID;
 	}
-
+	/**
+	 *
+	 * @param player the player whose missiles are to be gotten
+	 * @return null if player is null; otherwise the arrayList of missiles controller by player
+	 */
 	public static ArrayList<IMissile> getAllMissilesByPlayer(Player player) {
 		if (allMissilesByPlayer == null) {
 			allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
 			for (Player p : Controller.getPlayers())
-				allMissilesByPlayer.put(p, new ArrayList<>(0));
+				allMissilesByPlayer.put(p, new ArrayList<>(5));
 		}
-		return allMissilesByPlayer.get(player);
+		return (player == null) ? null : allMissilesByPlayer.get(player);
 	}
 
 	@Override
@@ -65,6 +70,8 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	@Override
 	public double getFearEffect() { return this.fearEffect; }
 	@Override
+	public boolean isLaunched() { return this.isLaunched; }
+	@Override
 	public PopulationHub getHomeBase() { return this.homeBase; }
 	@Override
 	public PopulationHub getTarget() { return this.target; }
@@ -76,12 +83,20 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		this.target = target;
 		this.target.targettedByMissle(this);
 		this.turnsToStrike = this.calcRoute(this.target);
+		this.homeBase.getMissilesBasedHere().remove(this);
+		this.isLaunched = true;
 		return this.turnsToStrike;
 	}
+
+	/**
+	 * Moves the missle toward it's target
+	 * @return the turns left to strike, or -1 if it strikes on this turns
+	 */
 	@Override
 	public int travel() {
 		if (this.pos.equals(this.target.getpos())) {
 			this.strike();
+			return -1;
 		}
 		this.pos.add(this.segment);
 		return this.turnsToStrike--;
@@ -95,9 +110,10 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		return newHomeBase;
 	}
 
-	/** deletes the current missile from all data structures holding missiles; call at the very end of any overrides */
+	/** applies fear to the target then deletes the current missile from all data structures holding missiles; call at the very end of any overrides */
 	@Override
 	public void strike() {
+		this.target.fearChange(this.fearEffect);
 		allMissilesByID.remove(this.id);
 		allMissilesByPlayer.get(this.homeBase.getOwner()).remove(this);
 	}
@@ -136,8 +152,16 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	}
 	@Override
 	public String toString() { return this.id.toString(); }
+	@Override
+	public boolean equals(Object other) {
+		if (other == null) return false;
+		if (other == this) return true;
+		if (!(other instanceof Missile))return false;
+		Missile otherM = (Missile)other;
+		return this.id.equals(otherM.id);
+	}
 
-	final static class MissileID {
+	final static class MissileID implements Comparable<MissileID>{
 		private MissileTypes ID = null;
 		private int missileNumber = -1;
 
@@ -149,6 +173,16 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 		public Integer getMissileNumber() { return this.missileNumber; }
 		@Override
 		public String toString() { return (this.ID.toString() + " #" + this.missileNumber ); }
+		@Override
+		public int compareTo(MissileID other) { return Integer.compare(this.missileNumber, other.missileNumber); }
+		@Override
+		public boolean equals(Object other) {
+			if (other == null) return false;
+			if (other == this) return true;
+			if (!(other instanceof MissileID))return false;
+			MissileID otherID = (MissileID)other;
+			return Integer.valueOf(this.missileNumber).equals(Integer.valueOf(otherID.missileNumber));
+		}
 	}
 
 	public enum MissileTypes {

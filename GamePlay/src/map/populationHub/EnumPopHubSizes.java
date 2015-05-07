@@ -1,6 +1,6 @@
 package map.populationHub;
 
-enum EnumPopulationHub {
+enum EnumPopHubSizes {
 
 	hamlet(IPopulationHub.hamletMinPop, IPopulationHub.hamletMissileProdPerTurn),
 	village(IPopulationHub.villageMinPop, IPopulationHub.villageMissileProdPerTurn),
@@ -11,7 +11,7 @@ enum EnumPopulationHub {
 	private int minPop;
 	private double missileProdPerTurn;
 	
-	EnumPopulationHub(int minPop, double missilesPerTurn) {
+	EnumPopHubSizes(int minPop, double missilesPerTurn) {
 		this.minPop = minPop;
 		this.missileProdPerTurn = missilesPerTurn;
 	}

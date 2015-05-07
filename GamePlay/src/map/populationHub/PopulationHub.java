@@ -19,15 +19,17 @@ import java.util.TreeMap;
 
 /**
  * Created by hayesj3 on 4/16/2015.
+ * Class to represent settlements of various sizes. Possible Sizes are defined in @see {@link EnumPopHubSizes}.
  */
 
 public final class PopulationHub implements IPopulationHub {
 
-    private static TreeMap<Player, ArrayList<PopulationHub>> allPopHubs;
+    private static TreeMap<Player, ArrayList<PopulationHub>> allPopHubsByPlayer;
+    private static ArrayList<PopulationHub> allPopHubs;
 
     private ArrayList<IMissile> missilesBasedHere;
-    private EnumPopulationHub size = null;
-    private EnumPopulationHub nextSize = null;
+    private EnumPopHubSizes size = null;
+    private EnumPopHubSizes nextSize = null;
 
     private int pop = 0;
     private double missileProductionPerTurn = 0.0;
@@ -39,29 +41,31 @@ public final class PopulationHub implements IPopulationHub {
     private Player owner = null;
     private Point2d pos = null;
 
+    public PopulationHub(Player founder) { this(founder, 0, 0); }
+    public PopulationHub(Player founder, double x, double y) { this(founder, new Point2d(x, y)); }
     public PopulationHub(Player founder, Point2d pos) {
-        this.fearAmount = 1.125 * (double)this.pop;
-        this.cityName = (String) JOptionPane.showInputDialog(null, "Choose a name:", "PopHub Founded",
-                JOptionPane.QUESTION_MESSAGE, Resources.iconII, null, null);
         this.owner = founder;
         this.pos = pos;
-
+        this.fearAmount = 1.125 * (double)this.pop;
+        String temp;
         if (this.owner.getCapital() == null) {
-            this.size = EnumPopulationHub.town;
+            this.size = EnumPopHubSizes.town;
+            temp = "Capital";
         } else {
-            this.size = EnumPopulationHub.hamlet;
+            this.size = EnumPopHubSizes.hamlet;
+            temp = "City #" + owner.getOwnedCities().size();
         }
-        this.nextSize = EnumPopulationHub.values()[this.size.ordinal() + 1];
-        System.out.println(this.cityName + " is of size " + this.size);
+        this.nextSize = EnumPopHubSizes.values()[this.size.ordinal() + 1];
         this.pop = this.size.getMinPop();
         this.missileProductionPerTurn = this.size.getMissileProdPerTurn();
-        getPlayersPopHubs(this.owner).add(this);
-        this.owner.getOwnedCities().add(this);
-
+        this.cityName = (String) JOptionPane.showInputDialog(null, "Choose a name:", "PopHub Founded",
+                JOptionPane.QUESTION_MESSAGE, Resources.iconII, null, temp);
+        System.out.println(this.cityName + " is of size " + this.size);
+        //this.owner.getOwnedCities().add(this);
+        getAllPopHubs().add(this);
     }
     @Override
     public void produce() {
-        this.missileProduction += this.missileProductionPerTurn;
         if (this.missileProduction >= 1.0) {
             Missile.MissileTypes missileType = (Missile.MissileTypes) JOptionPane.showInputDialog(null, "Choose a Missile:",
                     "Missile Produced!", JOptionPane.QUESTION_MESSAGE, Resources.iconII, Missile.MissileTypes.values(), null);
@@ -87,6 +91,7 @@ public final class PopulationHub implements IPopulationHub {
                     break;
             }
         }
+        this.missileProduction += this.missileProductionPerTurn;
     }
     public double targettedByMissle(Missile m) {
         return this.fearChange(m.getFearEffect());
@@ -100,40 +105,55 @@ public final class PopulationHub implements IPopulationHub {
     }
     public int populationChange(int change) {
         this.pop += change;
-        if (this.size.compareTo(EnumPopulationHub.metropolis) < 0 && this.pop >= this.nextSize.getMinPop()) {
+        if (this.size.compareTo(EnumPopHubSizes.metropolis) < 0 && this.pop >= this.nextSize.getMinPop()) {
             this.size = this.nextSize;
-            this.nextSize = EnumPopulationHub.values()[this.size.ordinal() + 1];
+            this.nextSize = EnumPopHubSizes.values()[this.size.ordinal() + 1];
         }
         return this.pop;
     }
     public Point2d getpos() { return this.pos; }
     public Player getOwner() { return this.owner; }
-    public static ArrayList<PopulationHub> getPlayersPopHubs (Player p) {
-        if (allPopHubs == null) {
-            allPopHubs = new TreeMap<>();
-            for (Player player : Controller.getPlayers()) {
-                allPopHubs.put(player, new ArrayList<>());
-            }
+
+    /**
+     * NOTE: the returned arraylist is a reference to {@link Player#ownedCities} for the specific player p.
+     * Therefore, Player#ownedCities must be non-null at the time of this function call
+     * @param p the player whose missiles are to be gotten
+     * @return null if p is null; otherwise the arrayList of PopHubs owned by p
+     */
+    public static ArrayList<PopulationHub> getAllPopHubsByPlayer(Player p) {
+        if (allPopHubsByPlayer == null) {
+            allPopHubsByPlayer = new TreeMap<>();
+            for (Player player : Controller.getPlayers()) allPopHubsByPlayer.put(player, player.getOwnedCities());
         }
-        return allPopHubs.get(p);
+        return ((p == null) ? null : allPopHubsByPlayer.get(p));
     }
     public ArrayList<IMissile> getMissilesBasedHere() {
         if (this.missilesBasedHere == null) {
             this.missilesBasedHere = new ArrayList<>();
             for (IMissile m : Missile.getAllMissilesByPlayer(this.owner)) {
-                if (m.getHomeBase().equals(this)) { this.missilesBasedHere.add(m); }
+                if (m == null) { break; }
+                else if (m.getHomeBase().equals(this)) { this.missilesBasedHere.add(m); }
                 else { continue; }
             }
         }
         return missilesBasedHere;
     }
+    public static ArrayList<PopulationHub> getAllPopHubs() {
+        if (allPopHubs == null) { allPopHubs = new ArrayList<>(Controller.getNumPlayers()); }
+        return allPopHubs;
+    }
+
     @Override
     public String toString() {
         return (cityName);
     }
-    public Boolean equals(PopulationHub other) {
-        if (other == null) { return null; }
-        return (this.cityName.equals(other.cityName) && this.equalStats(other));
+    @Override
+    public boolean equals(Object other) {
+        if (other == null) return false;
+        if (other == this) return true;
+        if (!(other instanceof PopulationHub))return false;
+        PopulationHub otherPh = (PopulationHub) other;
+        return (this.cityName.equals(otherPh.cityName) && this.equalStats(otherPh));
     }
     /** called by @see {@link PopulationHub#equals} as a helper function; checks the following stats of a PopulationHub:
      * <br>

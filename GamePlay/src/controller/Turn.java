@@ -14,63 +14,81 @@ import javax.swing.*;
  */
 public final class Turn {
 
-	private int maxTurn = 5;
-	private int currTurn = 0;
-	private int numActivePlayers = Controller.getPlayers().size();
+	private int maxTurns = -1;
+	private int currTurn = -1;
+	private int numActivePlayers;
 
 	private static Turn instance = null;
+	private static Object[] maxTurnChoices = {"25", "50", "75", "\u221E"};
 
-	private Turn () {
-		this.doTurn();
+	private Turn() {
+		this.numActivePlayers = Controller.getInstance().getNumPlayers();
+		this.currTurn = 0;
+		String temp = (String) JOptionPane.showInputDialog(null, "Choose Maximum number of turns:", "Max turns",
+				JOptionPane.QUESTION_MESSAGE, Resources.iconII, maxTurnChoices, maxTurnChoices[3]);
+		if (temp.equals("\u221E")) {
+			temp = "0";
+		}
+		this.maxTurns = Integer.valueOf(temp);
+		if (this.maxTurns == 0) {
+			// player chose infinite turns; this creates issues because of the recursive nature of doTurn(). Thus there upper limit is 1000 turns.
+			this.maxTurns = 1000;
+		}
 	}
 
 	/**
-	 * starts a turn, and at the end calls itself; this way the game is in one recursive method
-	 * In other words this method encapsulate  single turn, and starts the next turn in its return statement
-	 * @return true when a player wins, false if there is a tie and the max turns is reached
+	 * starts, does, and completes a single turn
+	 *
+	 * @return true when the game is over, either by victory or maximum number of turns, otherwise
 	 */
-	private boolean doTurn () {
-		if(currTurn == maxTurn)
-			return false;
-
+	public boolean doTurn() {
+	// pre-turn stuff
+		// check for a tie from the previous turn
+		if (currTurn > 0 && currTurn == maxTurns)
+			return true;
+	// begin the turn
 		currTurn++;
-	// start the turn
+		System.out.println("Turn #" + currTurn);
+		// start the turn
 		for (Player p : Controller.getPlayers()) {
 			// missile production
-			for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p)) {
+			for (PopulationHub ph : PopulationHub.getAllPopHubsByPlayer(p)) {
 				ph.produce();
 				System.out.println(ph + " is owned by " + ph.getOwner());
 			}
 			// launch attack(s)
 			int choice = -1;
-			do {
+			//int temp = p.getOwnedCities().forEach(ph -> {ph.getMissilesBasedHere().isEmpty(); } );
+			while (true) {
 				choice = JOptionPane.showConfirmDialog(null, "Would you like to attack?", "Attack Phase",
 						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, Resources.iconII);
-				if (choice == JOptionPane.NO_OPTION) { break; }
-				else {
+				if (choice == JOptionPane.NO_OPTION) {
+					break;
+				} else {
 					new AttackPopHubScreen(p);
 				}
-			} while (true);
+			}
 		}
-	// end the turn
+	// post-turn stuff
 		// missile movement
 		for (IMissile m : Missile.getAllMissilesByID().values()) {
-			if (m == null) {
-				break;
-			}
-			m.travel();
+			if (m == null || !m.isLaunched()) { continue; }
+			int temp = m.travel();
+			if (temp == -1) { m.strike(); }
 		}
-		return this.doTurn();
+		return false;
 	}
+
 	/**
 	 * get the number of active players
+	 *
 	 * @return the number of players still in the game
 	 */
-	public int getNumPlayers () {
+	public int getNumPlayers() {
 		return numActivePlayers;
 	}
 
-	public static Turn getInstance () {
+	public static Turn getInstance() {
 		if (instance == null) {
 			instance = new Turn();
 		}

@@ -3,21 +3,23 @@ package gui;
 import controller.Controller;
 import map.populationHub.PopulationHub;
 import player.Player;
+import util.Predicates;
 import weapon.missile.baseMissile.IMissile;
 import weapon.missile.baseMissile.Missile;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class AttackPopHubScreen extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JTree popHubs;
+    private JList popHubs;
     private JList missiles;
+    private JScrollPane popHubScroller;
+    private JScrollPane missileScroller;
     private DefaultTreeCellRenderer renderer;
 
     private Player activePlayer;
@@ -27,26 +29,16 @@ public class AttackPopHubScreen extends JDialog {
      */
     public AttackPopHubScreen(Player activePlayer) {
         this.activePlayer = activePlayer;
-        setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-
-        DefaultListModel<IMissile> listModel = new DefaultListModel<>();
-        for (IMissile m : Missile.getAllMissilesByPlayer(activePlayer)) {
-            listModel.addElement(m);
-            System.out.println(m + " added to list!");
-        }
-        this.missiles = new JList(listModel);
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                PopulationHub target = onOK();
-
-                Missile.getAllMissilesByPlayer(activePlayer);
-
+                PopulationHub target = (PopulationHub) popHubs.getSelectedValue();
+                Missile.getAllMissilesByPlayer(activePlayer).get(missiles.getSelectedIndex()).launch(target);
+                onOK();
             }
         });
-
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
@@ -67,12 +59,15 @@ public class AttackPopHubScreen extends JDialog {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+
+
+        setContentPane(contentPane);
+        this.pack();
+        this.setVisible(true);
     }
 
-    private PopulationHub onOK() {
-        PopulationHub target = (PopulationHub) this.popHubs.getLastSelectedPathComponent();
+    private void onOK() {
         dispose();
-        return target;
     }
 
     private void onCancel() {
@@ -81,7 +76,7 @@ public class AttackPopHubScreen extends JDialog {
     }
 
     public static void main(String[] args) {
-        Controller.getInstance();
+        Controller.getInstance().startGame();
         AttackPopHubScreen dialog = new AttackPopHubScreen(Controller.getPlayers().get(0));
         dialog.pack();
         dialog.setVisible(true);
@@ -89,21 +84,21 @@ public class AttackPopHubScreen extends JDialog {
     }
 
     private void createUIComponents() {
-    // create popHubs
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("Players", true);
-        DefaultMutableTreeNode playerNode;
-        for (Player p : Controller.getInstance().getPlayers()) {
-            playerNode = new DefaultMutableTreeNode(p, true);
-            for (PopulationHub ph : PopulationHub.getPlayersPopHubs(p))
-                playerNode.add(new DefaultMutableTreeNode(ph, false));
-            root.add(playerNode);
+    // create JList popHubs
+        DefaultListModel<PopulationHub> popHubListModel = new DefaultListModel<>();
+        ArrayList<PopulationHub> popHubsToList = new ArrayList<PopulationHub>(PopulationHub.getAllPopHubs());
+        popHubsToList.removeIf(Predicates.getInstance().popHubsOwnedByAnyoneBut(activePlayer));
+        for (PopulationHub ph : popHubsToList) {
+            popHubListModel.addElement(ph);
         }
-        this.popHubs = new JTree(root);
-        this.popHubs.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        this.renderer = new DefaultTreeCellRenderer();
-        this.renderer.setLeafIcon(null);
-        //TODO set renderer values for closed and open branch nodes
-        this.popHubs.setCellRenderer(this.renderer);
+        this.popHubs = new JList(popHubListModel);
 
+    // create JList missiles
+        DefaultListModel<IMissile> missileListModel = new DefaultListModel<>();
+        for (IMissile m : Missile.getAllMissilesByPlayer(this.activePlayer)) {
+            if (m.isLaunched()) { continue; }
+            missileListModel.addElement(m);
+        }
+        this.missiles = new JList(missileListModel);
     }
 }
