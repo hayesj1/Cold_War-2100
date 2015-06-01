@@ -1,0 +1,19 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Cold_War-2100:jar">
+    <output-path>$PROJECT_DIR$/production/bin/artifacts/Cold_War_2100_jar</output-path>
+    <root id="archive" name="Cold_War-2100.jar">
+      <element id="library" level="project" name="vecmath-1_5_2" />
+      <element id="file-copy" path="$PROJECT_DIR$/Graphics/lib/forms_rt-7.0.3.jar" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Cold_War-2100" />
+      <element id="module-output" name="Graphics" />
+      <element id="module-output" name="Net" />
+      <element id="module-output" name="GamePlay" />
+      <element id="directory" name="assets">
+        <element id="dir-copy" path="$PROJECT_DIR$/production/resources" />
+      </element>
+    </root>
+  </artifact>
+</component>

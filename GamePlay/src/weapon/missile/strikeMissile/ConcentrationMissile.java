@@ -4,36 +4,28 @@ import map.populationHub.PopulationHub;
 import player.Player;
 import weapon.missile.baseMissile.Missile;
 
+import java.io.Serializable;
+
 /**
  * Created by hayesj3 on 4/13/2015.
  */
-public class ConcentrationMissile extends Missile {
+public class ConcentrationMissile extends Missile implements Serializable {
 
-    protected ConcentrationTiers tier = null;
+    private String name;
     public ConcentrationMissile(Player owner) { this(owner.getCapital()); }
-    public ConcentrationMissile(PopulationHub homebase) { super(homebase, MissileTypes.ConcentrationMissile); }
-
-
-    @Override
-    public void applyEffect() {
-        //TODO apply shockwave to the terrain within the blast radius + tier.range
+    public ConcentrationMissile(PopulationHub homebase) {
+        super(homebase, MissileTypes.ConcentrationMissile);
     }
 
-    public enum ConcentrationTiers{
-        low(3.0, 0.25, ConcentrationType.mild),
-        std(4.0, 1.0, ConcentrationType.medium),
-        high(7.0, 1.25, ConcentrationType.deadly),
-        elite(10.0, 1.5, ConcentrationType.deadly);
-
-        private double concenRange;
-        private double concenDensity;
-        private ConcentrationType concenType;
-        private enum ConcentrationType { mild, medium, deadly; }
-
-        private ConcentrationTiers(double range, double density, ConcentrationType type) {
-            this.concenRange = range;
-            this.concenDensity = density;
-            this.concenType = type;
-        }
+    @Override
+    public void strike() {
+        this.applyEffect();
+        this.target.populationChange(this.tier.getPayload().getPopLoss());
+        System.out.println(this.target + " struck by " + this);
+        super.strike();
+    }
+    @Override
+    public void applyEffect() {
+        //TODO apply shockwave to the terrain within the blast radius + tier.effectRange
     }
 }

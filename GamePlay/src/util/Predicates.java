@@ -14,7 +14,8 @@ public final class Predicates {
     private static Predicates instance;
     private Predicates() {}
 
-    public Predicate<PopulationHub> popHubsOwnedByAnyoneBut(Player player) { return ph -> !ph.getOwner().equals(player); }
+    public Predicate<PopulationHub> popHubsOwnedByPlayer(Player player) { return ph -> ph.getOwner().equals(player); }
+    public Predicate<PopulationHub> ruinedPopHubs() { return ph -> ph.getRuined(); }
 
     public static Predicates getInstance() {
         if (instance == null) {

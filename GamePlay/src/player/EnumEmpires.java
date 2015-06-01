@@ -7,7 +7,7 @@ public enum EnumEmpires {
     USA("Untied States of America"),
     USSR("Union of Soviet Socialist Republics"),
     EU("Europian Union"),
-    AFAP("Africans For African Progress"),
+    PRA("People's Republic of Africa"),
     AAA("Austral-Asian Alliance"),
     GAWD("Group for Antarctica's World Domination");
 

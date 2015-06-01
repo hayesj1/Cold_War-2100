@@ -3,7 +3,10 @@ package weapon.missile.baseMissile;
 import controller.Controller;
 import map.populationHub.PopulationHub;
 import player.Player;
+import resource.Resources;
+import weapon.missile.interceptionMissile.InterceptMissile;
 
+import javax.swing.*;
 import javax.vecmath.Point2d;
 import javax.vecmath.Vector2d;
 import java.util.ArrayList;
@@ -18,10 +21,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	private boolean isLaunched = false;
 	protected MissileID id = null;
 
-	protected double maxRange = 0.0;
-	protected double rangePerTurn = 0.0;
-	protected double fearEffect = -1.0;
-	protected double blastRadius = 0.0;
+	protected MissileTiers tier = null;
 
 	protected Point2d pos = null;
 	protected PopulationHub homeBase = null;
@@ -31,14 +31,19 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	protected Vector2d segment = null;
 	protected Integer turnsToStrike = null;
 
+	/** Be sure to immediatly call @see {@link Missile#storeInDataStructures()} after constructing*/
 	protected Missile(PopulationHub homeBase, MissileTypes type) {
 		this.homeBase = homeBase;
 		this.pos = this.homeBase.getpos();
 		this.id = new MissileID(type, ++numMissiles);
+		this.tier = (MissileTiers) JOptionPane.showInputDialog(null, "Choose the tier of your missile:", "Missile Tier",
+				JOptionPane.QUESTION_MESSAGE, Resources.iconII, MissileTiers.values(), MissileTiers.std);
+	}
+	/** Stores the Missile in the game's data structures */
+	public void storeInDataStructures() {
 		getAllMissilesByID().put(this.id, this);
 		getAllMissilesByPlayer(homeBase.getOwner()).add(this);
 	}
-
 	public static TreeMap<MissileID, IMissile> getAllMissilesByID() {
 		if (allMissilesByID == null) {
 			allMissilesByID = new TreeMap<MissileID, IMissile>();
@@ -62,13 +67,15 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	@Override
 	public MissileID getID() { return this.id; }
 	@Override
-	public double getMaxRange() { return this.maxRange;}
+	public MissileTiers getTier() { return this.tier; }
 	@Override
-	public double getRangePerTurn() { return this.rangePerTurn; }
+	public double getMaxRange() { return this.tier.getMaxRange(); }
 	@Override
-	public double getBlastRadius() { return this.blastRadius; }
+	public double getRangePerTurn() { return this.tier.getRangePerTurn(); }
 	@Override
-	public double getFearEffect() { return this.fearEffect; }
+	public double getBlastRadius() { return this.tier.getBlastRadius(); }
+	@Override
+	public double getFearEffect() { return this.tier.getFearEffect(); }
 	@Override
 	public boolean isLaunched() { return this.isLaunched; }
 	@Override
@@ -81,7 +88,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	@Override
 	public int launch (PopulationHub target) {
 		this.target = target;
-		this.target.targettedByMissle(this);
+		this.target.targetedByMissile(this);
 		this.turnsToStrike = this.calcRoute(this.target);
 		this.homeBase.getMissilesBasedHere().remove(this);
 		this.isLaunched = true;
@@ -90,12 +97,11 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 
 	/**
 	 * Moves the missle toward it's target
-	 * @return the turns left to strike, or -1 if it strikes on this turns
+	 * @return the turns left to strike, or -1 if it should strike() on this turns
 	 */
 	@Override
 	public int travel() {
 		if (this.pos.equals(this.target.getpos())) {
-			this.strike();
 			return -1;
 		}
 		this.pos.add(this.segment);
@@ -113,7 +119,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	/** applies fear to the target then deletes the current missile from all data structures holding missiles; call at the very end of any overrides */
 	@Override
 	public void strike() {
-		this.target.fearChange(this.fearEffect);
+		this.target.fearChange(this.tier.getFearEffect());
 		allMissilesByID.remove(this.id);
 		allMissilesByPlayer.get(this.homeBase.getOwner()).remove(this);
 	}
@@ -129,15 +135,15 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 
 	protected int calcRoute(PopulationHub target) {
 		this.path = new Vector2d(target.getpos().getX(), target.getpos().getY());
-		double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
-		double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
+		double rangeX = this.getRangePerTurn() * Math.cos(this.path.angle(this.path));
+		double rangeY = this.getRangePerTurn() * Math.sin(this.path.angle(this.path));
 		this.segment = new Vector2d(rangeX, rangeY);
 		return this.calcTurnsToStrike();
 	}
 	protected int calcRoute(Missile target) {
 		this.path = new Vector2d(target.pos.getX(), target.pos.getY());
-		double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
-		double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
+		double rangeX = this.getRangePerTurn() * Math.cos(this.path.angle(this.path));
+		double rangeY = this.getRangePerTurn() * Math.sin(this.path.angle(this.path));
 		this.segment = new Vector2d(rangeX, rangeY);
 		return this.calcTurnsToStrike();
 	}
@@ -147,7 +153,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	}
 	@Override
 	public int compareTo(Missile other) {
-		int strSorting = this.id.getID().toString().compareToIgnoreCase(other.id.getID().toString());
+		int strSorting = this.id.getType().toString().compareToIgnoreCase(other.id.getType().toString());
 		return ((strSorting == 0) ? this.id.getMissileNumber().compareTo(other.id.getMissileNumber()) : strSorting);
 	}
 	@Override
@@ -162,24 +168,24 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	}
 
 	final static class MissileID implements Comparable<MissileID>{
-		private MissileTypes ID = null;
+		private MissileTypes type = null;
 		private int missileNumber = -1;
 
 		public MissileID(MissileTypes id, int number) {
-			this.ID = id;
+			this.type = id;
 			this.missileNumber = number;
 		}
-		public MissileTypes getID() { return this.ID; }
+		public MissileTypes getType() { return this.type; }
 		public Integer getMissileNumber() { return this.missileNumber; }
 		@Override
-		public String toString() { return (this.ID.toString() + " #" + this.missileNumber ); }
+		public String toString() { return (this.type.toString() + " #" + this.missileNumber ); }
 		@Override
 		public int compareTo(MissileID other) { return Integer.compare(this.missileNumber, other.missileNumber); }
 		@Override
 		public boolean equals(Object other) {
 			if (other == null) return false;
 			if (other == this) return true;
-			if (!(other instanceof MissileID))return false;
+			if (!(other instanceof MissileID)) return false;
 			MissileID otherID = (MissileID)other;
 			return Integer.valueOf(this.missileNumber).equals(Integer.valueOf(otherID.missileNumber));
 		}
@@ -187,17 +193,14 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 
 	public enum MissileTypes {
 		BioMissile("Bio Missile"),
-		NuclearMissile("Nuclear Missile,"),
+		NuclearMissile("Nuclear Missile"),
 		ConcentrationMissile("Concentration Missile"),
-
-		BioInterMissile("Bio Interception Missile"),
-		NuclearInterMissile("Nuclear Interception Missile,"),
-		ConcentrationInterMissile("Concentration Interception Missile");
+		InterceptionMissile("Interception Missile");
 
 		private String typeName;
 
-		private MissileTypes(String id) {
-			typeName = id;
+		MissileTypes(String name) {
+			typeName = name;
 		}
 		public String getTypeName() { return this.typeName; }
 		@Override

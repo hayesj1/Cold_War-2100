@@ -1,31 +1,38 @@
 package player;
 
 import controller.Controller;
+import gui.EnterAString;
+import gui.EnterAStringTypes;
 import map.populationHub.PopulationHub;
 import resource.Resources;
 
 import javax.swing.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player implements Comparable<Player>{
-
+public final class Player implements Comparable<Player>, Serializable {
+	/** @serial The popHubs owned by the Player */
 	private ArrayList<PopulationHub> ownedCities;
 
+	/** @serial The Player's id number; all players have different id numbers so they can use the same name */
 	protected Integer playerID = -1;
+	/** @serial The Player's display name */
 	protected String playerName = "";
 
+	/** @serial The empire the Player is allied to */
 	protected EnumEmpires allegiance = null;
+	/** @serial The capital popHub of a Player */
 	protected PopulationHub capital = null;
 
 	public Player() {
 		this.playerID = Controller.getNextPlayerID();
-		this.playerName =  (String) JOptionPane.showInputDialog(null, "Enter a name for player #" + (Controller.getPlayers().size()+1), "Player name",
-				JOptionPane.QUESTION_MESSAGE, Resources.iconII, null,("Player" + (Controller.getPlayers().size()+1)));
 		this.allegiance = (EnumEmpires)(JOptionPane.showInputDialog(null, "Choose an Allegiance:", "Allegiance",
 				JOptionPane.QUESTION_MESSAGE, Resources.iconII, EnumEmpires.values(), null));
 		System.out.println(this.playerName + " is now a member of the " + this.allegiance);
+		this.playerName = (new EnterAString(EnterAStringTypes.PLAYER, this)).getText();
 	}
 
+	public int getID() { return this.playerID; }
 	public String getName() { return this.playerName; }
 	public void setName(String newName) { this.playerName = newName; }
 	public PopulationHub getCapital () { return this.capital; }
@@ -52,4 +59,5 @@ public class Player implements Comparable<Player>{
 		int sortByName = this.playerName.compareTo(other.playerName);
 		return (sortByName == 0) ? this.playerID.compareTo(other.playerID) : sortByName;
 	}
+
 }

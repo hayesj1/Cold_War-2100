@@ -95,6 +95,7 @@
                 <properties>
                   <dropMode value="USE_SELECTION"/>
                   <enabled value="true"/>
+                  <selectionMode value="0"/>
                   <toolTipText value="Select a PopHub to attack"/>
                 </properties>
               </component>

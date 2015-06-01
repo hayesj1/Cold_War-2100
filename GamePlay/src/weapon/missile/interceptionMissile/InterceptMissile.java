@@ -1,6 +1,7 @@
-package weapon.missile.baseMissile;
+package weapon.missile.interceptionMissile;
 
 import map.populationHub.PopulationHub;
+import weapon.missile.baseMissile.Missile;
 
 import javax.vecmath.Tuple2d;
 import javax.vecmath.Vector2d;
@@ -8,14 +9,14 @@ import javax.vecmath.Vector2d;
 /**
  * Created by hayesj3 on 4/24/2015.
  */
-public abstract class InterceptMissile extends Missile {
+public class InterceptMissile extends Missile {
 
     Integer turnsToIntercept = null;
-    protected InterceptMissile(PopulationHub homeBase, MissileTypes type) {
-        super(homeBase, type);
+    public InterceptMissile(PopulationHub homeBase) {
+        super(homeBase, MissileTypes.InterceptionMissile);
     }
 
-    protected int intercept(Missile target) {
+    public int intercept(Missile target) {
         this.turnsToIntercept = super.calcRoute(target);
         Vector2d tempInterPath = null;
         Vector2d tempPath = null;
@@ -27,12 +28,14 @@ public abstract class InterceptMissile extends Missile {
             target.getSegment().scale(this.turnsToIntercept + i, temp);
             target.getPos().add(temp, tempPath);
             i++;
-        }
-        while (tempInterPath.epsilonEquals(tempPath, this.blastRadius));
+        } while (!tempInterPath.epsilonEquals(tempPath, this.getBlastRadius()));
         this.path = tempInterPath;
-        double rangeX = this.rangePerTurn * Math.cos(this.path.angle(this.path));
-        double rangeY = this.rangePerTurn * Math.sin(this.path.angle(this.path));
+        double rangeX = this.getRangePerTurn() * Math.cos(this.path.angle(this.path));
+        double rangeY = this.getRangePerTurn() * Math.sin(this.path.angle(this.path));
         this.segment = new Vector2d(rangeX, rangeY);
         return (this.turnsToIntercept += i);
     }
+
+    @Override
+    public void applyEffect() {}
 }

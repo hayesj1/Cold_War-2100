@@ -4,11 +4,12 @@
     <exclude-output />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/test_src" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/tests" isTestSource="false" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="Graphics" />
     <orderEntry type="library" name="vecmath-1_5_2" level="project" />
+    <orderEntry type="module" module-name="Net" />
   </component>
 </module>

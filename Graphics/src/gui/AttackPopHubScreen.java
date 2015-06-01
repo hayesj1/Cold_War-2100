@@ -29,8 +29,6 @@ public class AttackPopHubScreen extends JDialog {
      */
     public AttackPopHubScreen(Player activePlayer) {
         this.activePlayer = activePlayer;
-        setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -60,8 +58,9 @@ public class AttackPopHubScreen extends JDialog {
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
+        getRootPane().setDefaultButton(buttonOK);
         setContentPane(contentPane);
+        this.setModal(true);
         this.pack();
         this.setVisible(true);
     }
@@ -86,8 +85,9 @@ public class AttackPopHubScreen extends JDialog {
     private void createUIComponents() {
     // create JList popHubs
         DefaultListModel<PopulationHub> popHubListModel = new DefaultListModel<>();
-        ArrayList<PopulationHub> popHubsToList = new ArrayList<PopulationHub>(PopulationHub.getAllPopHubs());
-        popHubsToList.removeIf(Predicates.getInstance().popHubsOwnedByAnyoneBut(activePlayer));
+        ArrayList<PopulationHub> popHubsToList = new ArrayList<>(PopulationHub.getAllPopHubs());
+        popHubsToList.removeIf(Predicates.getInstance().popHubsOwnedByPlayer(activePlayer));
+        popHubsToList.removeIf(Predicates.getInstance().ruinedPopHubs());
         for (PopulationHub ph : popHubsToList) {
             popHubListModel.addElement(ph);
         }
@@ -96,6 +96,7 @@ public class AttackPopHubScreen extends JDialog {
     // create JList missiles
         DefaultListModel<IMissile> missileListModel = new DefaultListModel<>();
         for (IMissile m : Missile.getAllMissilesByPlayer(this.activePlayer)) {
+            System.out.println("Missile: " + m);
             if (m.isLaunched()) { continue; }
             missileListModel.addElement(m);
         }

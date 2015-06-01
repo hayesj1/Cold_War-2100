@@ -1,11 +1,12 @@
 package controller;
 
+import gui.EnterAString;
+import gui.EnterAStringTypes;
 import map.populationHub.PopulationHub;
+import net.server.ServerThread;
 import player.Player;
-import resource.Resources;
 import weapon.missile.baseMissile.Missile;
 
-import javax.swing.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -45,14 +46,14 @@ public final class Controller {
 		for (Player p : getPlayers()) {
 			counter++;
 			p.setCapital(new PopulationHub(p));
-			PopulationHub.getAllPopHubsByPlayer(p).add(p.getCapital());
+			//PopulationHub.getAllPopHubsByPlayer(p).add(p.getCapital());
 			p.getCapital().getMissilesBasedHere();
 		}
 		return this;
 	}
-	public Controller startGame() {
+	public Controller startGame(ServerThread server) {
 		this.initPlayers();
-		do {} while (!Controller.getTurnInstance().doTurn());
+		do {} while (!Controller.getTurnInstance().doTurn(server));
 		Controller.winners = new ArrayList<>();
 		winners.add(getPlayers().get(0));
 		return this;
@@ -77,8 +78,7 @@ public final class Controller {
 	}
 	public static Controller getInstance() {
 		if (instance == null) {
-			Integer numPlayers = Integer.valueOf((String) JOptionPane.showInputDialog(null, "How many players?", "How many players?",
-					JOptionPane.QUESTION_MESSAGE, Resources.iconII, null, Integer.valueOf(2)));
+			Integer numPlayers = Integer.valueOf(new EnterAString(EnterAStringTypes.NUM_PLAYERS, null).getText());
 			instance = new Controller(numPlayers);
 		}
 		return instance;

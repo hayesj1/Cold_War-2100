@@ -2,10 +2,12 @@ package weapon.missile.baseMissile;
 
 import map.populationHub.PopulationHub;
 import weapon.missile.baseMissile.Missile.MissileID;
+import weapon.missile.interceptionMissile.InterceptMissile;
 
 public interface IMissile {
 
     MissileID getID();
+    MissileTiers getTier();
     double getMaxRange();
     double getRangePerTurn();
     double getBlastRadius();

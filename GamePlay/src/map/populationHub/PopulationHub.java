@@ -1,19 +1,20 @@
 package map.populationHub;
 
 import controller.Controller;
+import gui.EnterAString;
+import gui.EnterAStringTypes;
 import player.Player;
 import resource.Resources;
 import weapon.missile.baseMissile.IMissile;
 import weapon.missile.baseMissile.Missile;
-import weapon.missile.interceptionMissile.BioInterMissile;
-import weapon.missile.interceptionMissile.ConcentrationInterMissile;
-import weapon.missile.interceptionMissile.NuclearInterMissile;
+import weapon.missile.interceptionMissile.InterceptMissile;
 import weapon.missile.strikeMissile.BioMissile;
 import weapon.missile.strikeMissile.ConcentrationMissile;
 import weapon.missile.strikeMissile.NuclearMissile;
 
 import javax.swing.*;
 import javax.vecmath.Point2d;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
@@ -22,7 +23,7 @@ import java.util.TreeMap;
  * Class to represent settlements of various sizes. Possible Sizes are defined in @see {@link EnumPopHubSizes}.
  */
 
-public final class PopulationHub implements IPopulationHub {
+public final class PopulationHub implements IPopulationHub, Serializable {
 
     private static TreeMap<Player, ArrayList<PopulationHub>> allPopHubsByPlayer;
     private static ArrayList<PopulationHub> allPopHubs;
@@ -40,80 +41,84 @@ public final class PopulationHub implements IPopulationHub {
     private String cityName = "";
     private Player owner = null;
     private Point2d pos = null;
+    private boolean ruined = false;
 
     public PopulationHub(Player founder) { this(founder, 0, 0); }
     public PopulationHub(Player founder, double x, double y) { this(founder, new Point2d(x, y)); }
     public PopulationHub(Player founder, Point2d pos) {
         this.owner = founder;
         this.pos = pos;
-        this.fearAmount = 1.125 * (double)this.pop;
-        String temp;
+        this.fearAmount = this.pop * IPopulationHub.fearConstant;
         if (this.owner.getCapital() == null) {
             this.size = EnumPopHubSizes.town;
-            temp = "Capital";
+            this.cityName = (new EnterAString(EnterAStringTypes.CAPITAL, this.owner)).getText();
         } else {
             this.size = EnumPopHubSizes.hamlet;
-            temp = "City #" + owner.getOwnedCities().size();
+            this.cityName = (new EnterAString(EnterAStringTypes.CITY, this.owner)).getText();
         }
         this.nextSize = EnumPopHubSizes.values()[this.size.ordinal() + 1];
         this.pop = this.size.getMinPop();
         this.missileProductionPerTurn = this.size.getMissileProdPerTurn();
-        this.cityName = (String) JOptionPane.showInputDialog(null, "Choose a name:", "PopHub Founded",
-                JOptionPane.QUESTION_MESSAGE, Resources.iconII, null, temp);
         System.out.println(this.cityName + " is of size " + this.size);
-        //this.owner.getOwnedCities().add(this);
         getAllPopHubs().add(this);
+        this.owner.getOwnedCities().add(this);
     }
-    @Override
-    public void produce() {
+    public void processTurn(Player p) {
+        this.populationChange(Math.toIntExact(Math.round(this.pop * IPopulationHub.popGrowthConstant)));
+        this.fearChange(this.pop * IPopulationHub.fearConstant);
+        this.nationalisticChange(this.pop * IPopulationHub.nationalismBonus * getAllPopHubsByPlayer(p).size());
+        this.produce();
+    }
+    public void nationalisticChange(double change) { this.nationalPride += change; }
+    public void fearChange(double change) { this.fearAmount += change; }
+    public void populationChange(int change) {
+        this.pop += change;
+        if (this.pop <= 0) {
+            this.pop = 0;
+            System.out.println(this + " has been destroyed!");
+            this.ruined = true;
+        } else if (this.size.compareTo(EnumPopHubSizes.metropolis) < 0 && this.pop >= this.nextSize.getMinPop()) {
+            this.size = this.nextSize;
+            this.nextSize = (this.size.equals(EnumPopHubSizes.metropolis)) ? null : EnumPopHubSizes.values()[this.size.ordinal() + 1];
+        }
+    }
+    private void produce() {
         if (this.missileProduction >= 1.0) {
-            Missile.MissileTypes missileType = (Missile.MissileTypes) JOptionPane.showInputDialog(null, "Choose a Missile:",
-                    "Missile Produced!", JOptionPane.QUESTION_MESSAGE, Resources.iconII, Missile.MissileTypes.values(), null);
+            int temp = JOptionPane.showOptionDialog(null, "Choose a Missile:", "Missile Produced!",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, Resources.iconII, Missile.MissileTypes.values(), Missile.MissileTypes.BioMissile);
+            Missile.MissileTypes missileType = Missile.MissileTypes.values()[(temp == -1) ? 0 : temp];
             this.missileProduction--;
             switch(missileType) {
                 case BioMissile:
-                    missilesBasedHere.add(new BioMissile(this));
+                    BioMissile bioMissile = new BioMissile(this);
+                    missilesBasedHere.add(bioMissile);
+                    bioMissile.storeInDataStructures();
                     break;
                 case ConcentrationMissile:
-                    missilesBasedHere.add(new ConcentrationMissile(this));
+                    ConcentrationMissile concenMissile = new ConcentrationMissile(this);
+                    missilesBasedHere.add(concenMissile);
+                    concenMissile.storeInDataStructures();
                     break;
                 case NuclearMissile:
-                    missilesBasedHere.add(new NuclearMissile(this));
+                    NuclearMissile nuclearMissile = new NuclearMissile(this);
+                    missilesBasedHere.add(nuclearMissile);
+                    nuclearMissile.storeInDataStructures();
                     break;
-                case BioInterMissile:
-                    missilesBasedHere.add(new BioInterMissile(this));
-                    break;
-                case ConcentrationInterMissile:
-                    missilesBasedHere.add(new ConcentrationInterMissile(this));
-                    break;
-                case NuclearInterMissile:
-                    missilesBasedHere.add(new NuclearInterMissile(this));
+                case InterceptionMissile:
+                    InterceptMissile interceptMissile = new InterceptMissile(this);
+                    missilesBasedHere.add(interceptMissile);
+                    interceptMissile.storeInDataStructures();
                     break;
             }
         }
         this.missileProduction += this.missileProductionPerTurn;
     }
-    public double targettedByMissle(Missile m) {
-        return this.fearChange(m.getFearEffect());
-    }
 
-    public double nationalisticShift(double shift) {
-        return this.nationalPride += (double)this.pop * 1.25 == this.nationalPride?shift:shift + (double)this.pop * 1.25;
-    }
-    public double fearChange(double change) {
-        return this.fearAmount += change;
-    }
-    public int populationChange(int change) {
-        this.pop += change;
-        if (this.size.compareTo(EnumPopHubSizes.metropolis) < 0 && this.pop >= this.nextSize.getMinPop()) {
-            this.size = this.nextSize;
-            this.nextSize = EnumPopHubSizes.values()[this.size.ordinal() + 1];
-        }
-        return this.pop;
-    }
+    public void targetedByMissile(Missile m) { this.fearChange(m.getFearEffect()); }
+
     public Point2d getpos() { return this.pos; }
     public Player getOwner() { return this.owner; }
-
+    public boolean getRuined() { return this.ruined; }
     /**
      * NOTE: the returned arraylist is a reference to {@link Player#ownedCities} for the specific player p.
      * Therefore, Player#ownedCities must be non-null at the time of this function call
