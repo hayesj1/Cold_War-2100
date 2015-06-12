@@ -13,6 +13,9 @@ import java.net.Socket;
 public class Driver {
 
 	public static void main(String[] args) {
+		Driver driver = new Driver(args);
+	}
+	private Driver(String[] args) {
 		switch (args[0]) {
 			case "LOCAL":
 				localGame();
@@ -25,16 +28,23 @@ public class Driver {
 				break;
 		}
 	}
-
-	private static void localGame() {
+	private void localGame() {
 		try {
-			Controller.getInstance().startGame(new ServerThread(new Socket(InetAddress.getLoopbackAddress(), Server.PORT)));
-		} catch (IOException e) {}
+			ServerThread server = new ServerThread(new Socket(InetAddress.getLoopbackAddress(), Server.PORT));
+			server.run();
+			do {
+				this.wait();
+			} while(Controller.getWinners() == null);
+		} catch (IOException e) {
+			System.out.println(e);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		System.out.println("Winner is: " + Controller.getWinners().get(0));
 	}
-	private static void networkedGame(String serverOrClient) {
+	private void networkedGame(String serverOrClient) {
 		try {
-			Server server = new Server();
+			Server server = new Server(Server.PORT);
 			Client client = new Client();
 
 			switch (serverOrClient) {
@@ -44,7 +54,7 @@ public class Driver {
 				case "CLIENT":
 					client.connect(InetAddress.getByName(JOptionPane.showInputDialog("Enter the IP Address of the server: ")));
 					if (client.connected()) {
-						client.beginGame();
+						client.evaulateTurn();
 					}
 					break;
 			}

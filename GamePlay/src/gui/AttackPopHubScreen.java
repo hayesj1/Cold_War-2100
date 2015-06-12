@@ -2,6 +2,7 @@ package gui;
 
 import controller.Controller;
 import map.populationHub.PopulationHub;
+import net.server.Server;
 import player.Player;
 import util.Predicates;
 import weapon.missile.baseMissile.IMissile;
@@ -10,6 +11,9 @@ import weapon.missile.baseMissile.Missile;
 import javax.swing.*;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.ArrayList;
 
 public class AttackPopHubScreen extends JDialog {
@@ -74,8 +78,8 @@ public class AttackPopHubScreen extends JDialog {
         dispose();
     }
 
-    public static void main(String[] args) {
-        Controller.getInstance().startGame();
+    public static void main(String[] args) throws IOException {
+        Controller.getInstance().startGame(new net.server.ServerThread(new Socket(InetAddress.getLoopbackAddress(), Server.PORT)));
         AttackPopHubScreen dialog = new AttackPopHubScreen(Controller.getPlayers().get(0));
         dialog.pack();
         dialog.setVisible(true);

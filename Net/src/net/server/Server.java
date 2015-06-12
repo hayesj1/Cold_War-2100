@@ -13,10 +13,11 @@ import java.util.Enumeration;
 public class Server {
     private ServerSocket listener;
     public static final int PORT = 55655;
+    public static final int LOCAL_PORT = 8080;
 
-
-    public Server() throws IOException {
-        listener = new ServerSocket(PORT);
+    public Server() throws IOException { this(LOCAL_PORT ); }
+    public Server(int port)throws IOException {
+        listener = new ServerSocket(port);
     }
 
     public void listen() throws IOException {

@@ -2,6 +2,7 @@ package net.client;
 
 import net.GEP;
 import net.server.Server;
+import net.server.ServerThread;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -12,37 +13,63 @@ import java.net.Socket;
  */
 
 public class Client {
-    private Socket clientAddr;
+    private Socket serverAddr;
+    private ServerThread server;
 
     private BufferedReader in;
     private BufferedWriter out;
+    private ObjectInputStream objectIn;
+    private ObjectOutputStream objectOut;
     private boolean connected = false;
+
+    public Socket getServerAddr() { return serverAddr; }
+    public ServerThread getServer() { return server; }
+    public BufferedReader getIn() { return in; }
+    public BufferedWriter getOut() { return out; }
+    public ObjectOutputStream getObjectOut() { return objectOut; }
+    public ObjectInputStream getObjectIn() { return objectIn; }
+
+    public void setServer(ServerThread serverThread) { server = serverThread; }
 
     public boolean connected() { return connected; }
 
     public boolean connect(InetAddress serverAddr) {
         try {
             if (serverAddr == null) { throw new NullPointerException("Server Address cannot be Null!"); }
-            clientAddr = new Socket(serverAddr, Server.PORT);
-            in = new BufferedReader(new InputStreamReader(clientAddr.getInputStream()));
-            out = new BufferedWriter(new OutputStreamWriter(clientAddr.getOutputStream()));
+            this.serverAddr = new Socket(serverAddr, Server.PORT);
+            in = new BufferedReader(new InputStreamReader(this.serverAddr.getInputStream()));
+            out = new BufferedWriter(new OutputStreamWriter(this.serverAddr.getOutputStream()));
             connected = true;
         } catch (IOException ioe) { return false; }
         return true;
     }
 
-    public void beginGame() {
+    public void evaulateTurn() {
         try {
             String data;
-            String[] lines;
+            String[] parts;
             String title, message;
             GEP.EnumEvents event;
             while (true) {
                 data = GEP.readEvent(in);
-                lines = data.split("|");
-                event = GEP.EnumEvents.valueOf(lines[0]);
-                title = lines[1];
-                message = lines[2];
+                parts = data.split("|");
+                event = GEP.EnumEvents.valueOf(parts[0]);
+                title = parts[1];
+                message = parts[2];
+                switch(event) {
+                    case WELCOME:
+                        break;
+                    case POPHUB_STRUCK:
+                        break;
+                    case POPHUB_DESTROYED:
+                        break;
+                    case DEFEAT:
+                        break;
+                    case VICTOR:
+                        break;
+                    default:
+                        break;
+                }
 
 
             }

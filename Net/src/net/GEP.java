@@ -13,21 +13,26 @@ public final class GEP {
 
     public static void sendEvent(BufferedWriter out, EnumEvents event) throws IOException {
         out.write(event.toString());
-        out.newLine();
+        out.write("|");
         out.write(event.getTitle());
-        out.newLine();
+        out.write("|");
         out.write(event.getMessage());
+        out.newLine();
     }
     public static String readEvent(BufferedReader in) throws IOException {
-        String ret = "";
-        String temp = "";
-        for (int i = 0; (temp += in.readLine()) != null; i++, ret += temp, temp = "|");
-        return ret;
+        return (new String(in.readLine()));
     }
     public enum EnumEvents {
-        FOUND("Founding Phase", "Found a new Pophub?"),
-        ATTACK("Attack Phase", "Launch a missile?"),
-        POPHUB_STRUCK("PopHub Attacked!", "Your Pophub has been struck by an enemy Missile!"),
+        WELCOME("Welcome to the Cold War!", "The year is 2100, and with the Cold war nearing it's 200th Anniversary tensions are at an all time high.\n" +
+                "Nuclear war seems just over the horizon, and new commanders have been appointed to oversee nuclear operations.\n\n" +
+                "You, Commander, have been chosen to oversee a vast nuclear arsenal as well as standard armed forces. " +
+                "The research and developement team has some grand ideas too... If you invest the time and finanaces..."),
+        MOVED_MISSLE("Missile  Moved!", "Your missile has been stationed in a new Pophub."),
+        FOUNDED("Pophub Founded", "A new Pophub has been founded!"),
+        ATTACKED("Pophub Attacked", "Missile launched at Pophub"),
+        POPHUB_STRUCK("Pophub Struck!", "Your Pophub has been struck by an enemy missile!"),
+        POPHUB_DESTROYED("Pophub Destroyed!", "Your Pophub has been leveled by enemy missiles!"),
+        END_TURN("Turn over", "Please wait for the other players to finish their turns"),
         DEFEAT("LOSER!", "Your mighty civilization has fallen at the hands of its enemies."),
         VICTOR("WINNER!", "Congratulations Commander! You have defeated all your opponents with your strategic prowess and arsenal of missiles!");
 

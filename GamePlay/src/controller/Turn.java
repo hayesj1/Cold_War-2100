@@ -48,9 +48,9 @@ public final class Turn {
 	/**
 	 * starts, does, and completes a single turn
 	 *
-	 * @return true when the game is over, either by victory or maximum number of turns, otherwise
+	 * @return true when the game is over, either by victory or maximum number of turns, otherwise false
 	 */
-	public boolean doTurn(ServerThread server) {
+	public boolean doTurn() {
 	// pre-turn stuff
 		// check for a tie from the previous turn
 		if (currTurn > 0 && currTurn == maxTurns)
@@ -71,9 +71,6 @@ public final class Turn {
 				System.out.println(ph + " is owned by " + ph.getOwner());
 			}
 			// launch attack(s)
-			try {
-				GEP.sendEvent(server.getOut(), GEP.EnumEvents.ATTACK);
-			} catch (IOException e) { e.printStackTrace(); }
 			int choice = -1;
 			while (p.getOwnedCities().stream().anyMatch(ph -> ph.getMissilesBasedHere().size() != 0)) {
 				choice = JOptionPane.showConfirmDialog(null, "Would you like to attack?", "Attack Phase",
@@ -85,9 +82,6 @@ public final class Turn {
 				}
 			}
 			// found new PopHubs
-			try {
-				GEP.sendEvent(server.getOut(), GEP.EnumEvents.FOUND);
-			} catch (IOException e) { e.printStackTrace(); }
 			choice = -1;
 			do {
 				choice = JOptionPane.showConfirmDialog(null, "Would you like to found a new PopHub?", "Founding Phase",
@@ -100,7 +94,7 @@ public final class Turn {
 						coords = new EnterAString(EnterAStringTypes.ENTER_COORDS, null).getText();
 					}
 					String[] temp = coords.split(",");
-					new PopulationHub(p, Integer.valueOf(temp[0]), Integer.valueOf(temp[1]));
+					new PopulationHub(p, Integer.valueOf(temp[0]), Integer.valueOf(temp[1])).addToDS();
 				}
 			} while (true);
 		// end the turn
@@ -116,6 +110,44 @@ public final class Turn {
 		toStrike.forEach( m -> m.strike() );
 		toStrike.clear();
 
+		return false;
+	}
+	public boolean doTurn(ServerThread server) {
+	// pre-turn stuff
+		// check for a tie from the previous turn
+		if (currTurn > 0 && currTurn == maxTurns)
+			return true;
+	//turn stuff
+		currTurn++;
+		System.out.println("Turn #" + currTurn);
+		// start the turn
+		for (Player p : Controller.getPlayers()) {
+			currentPlayer = p.getID();
+			System.out.println(PopulationHub.getAllPopHubsByPlayer(p));
+
+			// missile production
+			System.out.println(p + "\'s turn");
+			for (PopulationHub ph : PopulationHub.getAllPopHubsByPlayer(p)) {
+				if (ph.getRuined()) {
+					continue;
+				}
+				ph.processTurn(p);
+				System.out.println(ph + " is owned by " + ph.getOwner());
+			}
+			// launch attack(s)
+			try {
+				GEP.sendEvent(server.getOut(), GEP.EnumEvents.ATTACKED);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			// found new PopHubs
+			try {
+				GEP.sendEvent(server.getOut(), GEP.EnumEvents.FOUNDED);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return false;
 	}
 

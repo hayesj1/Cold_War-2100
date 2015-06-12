@@ -111,7 +111,7 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	public PopulationHub move(PopulationHub newHomeBase) {
 		this.homeBase.getMissilesBasedHere().remove(this);
 		this.homeBase = newHomeBase;
-		this.pos = homeBase.getpos();
+		this.pos = newHomeBase.getpos();
 		this.homeBase.getMissilesBasedHere().add(this);
 		return newHomeBase;
 	}

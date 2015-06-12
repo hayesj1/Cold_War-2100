@@ -14,6 +14,9 @@ import weapon.missile.strikeMissile.NuclearMissile;
 
 import javax.swing.*;
 import javax.vecmath.Point2d;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -42,6 +45,7 @@ public final class PopulationHub implements IPopulationHub, Serializable {
     private Player owner = null;
     private Point2d pos = null;
     private boolean ruined = false;
+    private boolean inDataStructures = false;
 
     public PopulationHub(Player founder) { this(founder, 0, 0); }
     public PopulationHub(Player founder, double x, double y) { this(founder, new Point2d(x, y)); }
@@ -60,8 +64,10 @@ public final class PopulationHub implements IPopulationHub, Serializable {
         this.pop = this.size.getMinPop();
         this.missileProductionPerTurn = this.size.getMissileProdPerTurn();
         System.out.println(this.cityName + " is of size " + this.size);
-        getAllPopHubs().add(this);
-        this.owner.getOwnedCities().add(this);
+    }
+    public PopulationHub(ObjectInputStream objectInput) throws IOException, ClassNotFoundException {
+        readObject(objectInput);
+        System.out.println(this.cityName + " is of size " + this.size);
     }
     public void processTurn(Player p) {
         this.populationChange(Math.toIntExact(Math.round(this.pop * IPopulationHub.popGrowthConstant)));
@@ -115,14 +121,27 @@ public final class PopulationHub implements IPopulationHub, Serializable {
     }
 
     public void targetedByMissile(Missile m) { this.fearChange(m.getFearEffect()); }
-
+    /**
+     * Adds the popHub to all popHub data structures. Returns a reference to itself for method chaining.
+     * <p>
+     * <b>ALWAYS CALL AFTER CREATING A NEW A POPULATIONHUB INSTANCE!</b>
+     * @return a reference to <code>this</code> so method chaining can occur on the same line as instance creation and usage.
+     */
+    public PopulationHub addToDS() {
+        getAllPopHubs().add(this);
+        this.owner.getOwnedCities().add(this);
+        this.inDataStructures = true;
+        return this;
+    }
     public Point2d getpos() { return this.pos; }
     public Player getOwner() { return this.owner; }
     public boolean getRuined() { return this.ruined; }
+    public boolean isInDataStructures() { return this.inDataStructures; }
+
     /**
      * NOTE: the returned arraylist is a reference to {@link Player#ownedCities} for the specific player p.
      * Therefore, Player#ownedCities must be non-null at the time of this function call
-     * @param p the player whose missiles are to be gotten
+     * @param p the player whose popHubs are to be gotten
      * @return null if p is null; otherwise the arrayList of PopHubs owned by p
      */
     public static ArrayList<PopulationHub> getAllPopHubsByPlayer(Player p) {
@@ -146,6 +165,13 @@ public final class PopulationHub implements IPopulationHub, Serializable {
     public static ArrayList<PopulationHub> getAllPopHubs() {
         if (allPopHubs == null) { allPopHubs = new ArrayList<>(Controller.getNumPlayers()); }
         return allPopHubs;
+    }
+
+    public void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+        ois.defaultReadObject();
+    }
+    public void writeObject(ObjectOutputStream oos) throws IOException {
+        oos.defaultWriteObject();
     }
 
     @Override

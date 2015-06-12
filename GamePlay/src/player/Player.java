@@ -3,8 +3,9 @@ package player;
 import controller.Controller;
 import gui.EnterAString;
 import gui.EnterAStringTypes;
+import gui.HUD;
 import map.populationHub.PopulationHub;
-import resource.Resources;
+import net.client.Client;
 
 import javax.swing.*;
 import java.io.Serializable;
@@ -15,19 +16,24 @@ public final class Player implements Comparable<Player>, Serializable {
 	private ArrayList<PopulationHub> ownedCities;
 
 	/** @serial The Player's id number; all players have different id numbers so they can use the same name */
-	protected Integer playerID = -1;
+	private Integer playerID = -1;
 	/** @serial The Player's display name */
-	protected String playerName = "";
+	private String playerName = "";
 
 	/** @serial The empire the Player is allied to */
-	protected EnumEmpires allegiance = null;
+	private EnumEmpires allegiance = null;
 	/** @serial The capital popHub of a Player */
-	protected PopulationHub capital = null;
+	private PopulationHub capital = null;
+
+	/** @serial The main game HUD */
+	private HUD mainGUI = null;
+	/** @serial The cleint associated this player */
+	private Client client = null;
 
 	public Player() {
 		this.playerID = Controller.getNextPlayerID();
 		this.allegiance = (EnumEmpires)(JOptionPane.showInputDialog(null, "Choose an Allegiance:", "Allegiance",
-				JOptionPane.QUESTION_MESSAGE, Resources.iconII, EnumEmpires.values(), null));
+				JOptionPane.QUESTION_MESSAGE, null, EnumEmpires.values(), null));
 		System.out.println(this.playerName + " is now a member of the " + this.allegiance);
 		this.playerName = (new EnterAString(EnterAStringTypes.PLAYER, this)).getText();
 	}
@@ -38,6 +44,10 @@ public final class Player implements Comparable<Player>, Serializable {
 	public PopulationHub getCapital () { return this.capital; }
 	public void setCapital(PopulationHub newCapital) { this.capital = newCapital; }
 	public EnumEmpires getAllegiance() { return this.allegiance; }
+	public HUD getMainGUI() { return this.mainGUI; }
+	public void setMainGUI(HUD mainGUI) { this.mainGUI = mainGUI; }
+	public Client getClient() { return this.client; }
+	public void setClient(Client client) { this.client = client; }
 
 	public ArrayList<PopulationHub> getOwnedCities() {
 		if (this.ownedCities == null) {
@@ -59,5 +69,4 @@ public final class Player implements Comparable<Player>, Serializable {
 		int sortByName = this.playerName.compareTo(other.playerName);
 		return (sortByName == 0) ? this.playerID.compareTo(other.playerID) : sortByName;
 	}
-
 }
