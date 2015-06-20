@@ -1,6 +1,6 @@
 package player;
 
-import controller.Controller;
+import game.ColdWar2100;
 import gui.EnterAString;
 import gui.EnterAStringTypes;
 import gui.HUD;
@@ -27,11 +27,11 @@ public final class Player implements Comparable<Player>, Serializable {
 
 	/** @serial The main game HUD */
 	private HUD mainGUI = null;
-	/** @serial The cleint associated this player */
+	/** @serial The client associated this player */
 	private Client client = null;
 
 	public Player() {
-		this.playerID = Controller.getNextPlayerID();
+		this.playerID = ColdWar2100.getNextPlayerID();
 		this.allegiance = (EnumEmpires)(JOptionPane.showInputDialog(null, "Choose an Allegiance:", "Allegiance",
 				JOptionPane.QUESTION_MESSAGE, null, EnumEmpires.values(), null));
 		System.out.println(this.playerName + " is now a member of the " + this.allegiance);

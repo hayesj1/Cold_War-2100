@@ -3,6 +3,7 @@ package net.client;
 import net.GEP;
 import net.server.Server;
 import net.server.ServerThread;
+import player.Player;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -12,7 +13,7 @@ import java.net.Socket;
  * Created by hayesj3 on 5/19/2015.
  */
 
-public class Client {
+public final class Client {
     private Socket serverAddr;
     private ServerThread server;
 
@@ -21,6 +22,8 @@ public class Client {
     private ObjectInputStream objectIn;
     private ObjectOutputStream objectOut;
     private boolean connected = false;
+
+    private Player player;
 
     public Socket getServerAddr() { return serverAddr; }
     public ServerThread getServer() { return server; }
@@ -43,7 +46,9 @@ public class Client {
         } catch (IOException ioe) { return false; }
         return true;
     }
-
+    public void init() {
+        this.player = new Player();
+    }
     public void evaulateTurn() {
         try {
             String data;

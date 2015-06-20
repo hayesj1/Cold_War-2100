@@ -1,4 +1,4 @@
-package controller;
+package game;
 
 import gui.AttackPopHubScreen;
 import gui.EnterAString;
@@ -23,14 +23,14 @@ public final class Turn {
 	private int maxTurns = -1;
 	private int currTurn = -1;
 	private int numActivePlayers;
-	/** the id of the current player; corresponds to the index of the player in {@link Controller#players} */
+	/** the id of the current player; corresponds to the index of the player in {@link ColdWar2100#players} */
 	private int currentPlayer;
 
 	private static Turn instance = null;
 	private static Object[] maxTurnChoices = {"25", "50", "75", "\u221E"};
 
 	private Turn() {
-		this.numActivePlayers = Controller.getNumPlayers();
+		this.numActivePlayers = ColdWar2100.getNumPlayers();
 		this.currTurn = 0;
 		this.currentPlayer = 0;
 		String temp = (String) JOptionPane.showInputDialog(null, "Choose Maximum number of turns:", "Max turns",
@@ -59,7 +59,7 @@ public final class Turn {
 		currTurn++;
 		System.out.println("Turn #" + currTurn);
 		// start the turn
-		for (Player p : Controller.getPlayers()) {
+		for (Player p : ColdWar2100.getPlayers()) {
 			currentPlayer = p.getID();
 			System.out.println(PopulationHub.getAllPopHubsByPlayer(p));
 
@@ -121,7 +121,7 @@ public final class Turn {
 		currTurn++;
 		System.out.println("Turn #" + currTurn);
 		// start the turn
-		for (Player p : Controller.getPlayers()) {
+		for (Player p : ColdWar2100.getPlayers()) {
 			currentPlayer = p.getID();
 			System.out.println(PopulationHub.getAllPopHubsByPlayer(p));
 

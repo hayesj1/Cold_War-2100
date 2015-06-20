@@ -1,6 +1,6 @@
 package testGame;
 
-import controller.Controller;
+import game.ColdWar2100;
 import net.client.Client;
 import net.server.Server;
 import net.server.ServerThread;
@@ -34,13 +34,13 @@ public class Driver {
 			server.run();
 			do {
 				this.wait();
-			} while(Controller.getWinners() == null);
+			} while(ColdWar2100.getWinners() == null);
 		} catch (IOException e) {
 			System.out.println(e);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		System.out.println("Winner is: " + Controller.getWinners().get(0));
+		System.out.println("Winner is: " + ColdWar2100.getWinners().get(0));
 	}
 	private void networkedGame(String serverOrClient) {
 		try {
@@ -54,6 +54,7 @@ public class Driver {
 				case "CLIENT":
 					client.connect(InetAddress.getByName(JOptionPane.showInputDialog("Enter the IP Address of the server: ")));
 					if (client.connected()) {
+						client.init();
 						client.evaulateTurn();
 					}
 					break;

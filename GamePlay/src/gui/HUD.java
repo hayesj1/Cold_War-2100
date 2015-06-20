@@ -1,6 +1,6 @@
 package gui;
 
-import controller.Controller;
+import game.ColdWar2100;
 import map.populationHub.PopulationHub;
 import net.GEP;
 import player.Player;
@@ -120,8 +120,8 @@ public class HUD extends JDialog {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("HUD");
-        Controller.getInstance();
-        frame.setContentPane(new HUD(Controller.getPlayers().get(0)).mainPanel);
+        ColdWar2100.getInstance();
+        frame.setContentPane(new HUD(ColdWar2100.getPlayers().get(0)).mainPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);

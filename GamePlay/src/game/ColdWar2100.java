@@ -1,4 +1,4 @@
-package controller;
+package game;
 
 import gui.EnterAString;
 import gui.EnterAStringTypes;
@@ -7,6 +7,7 @@ import map.populationHub.PopulationHub;
 import net.GEP;
 import net.server.ServerThread;
 import player.Player;
+import util.Predicates;
 import weapon.missile.baseMissile.Missile;
 
 import java.io.File;
@@ -14,9 +15,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public final class Controller implements Runnable {
+public final class ColdWar2100 implements Runnable {
 
-	private static Controller instance;
+	private static ColdWar2100 instance;
 	private static Turn turnInstance;
 	private static ServerThread serverInstance;
 	private static int numPlayers = -1;
@@ -24,16 +25,15 @@ public final class Controller implements Runnable {
 	private static ArrayList<Player> winners = null;
 
 	private static TreeMap<String, File> savedGames = new TreeMap<>();
-	private static TreeMap<String, Player> previousPlayerNames;
+	private static ArrayList<String> previoususers;
 	private static File playerNamesCache;
 
-	private Controller () { this(2); }
-	private Controller (int initialPlayers) {
+	private ColdWar2100(int initialPlayers) {
 		numPlayers = initialPlayers;
 		//initialize all data structures
 		this.initDS();
 	}
-	private Controller initDS() {
+	private ColdWar2100 initDS() {
 		getPlayers();
 		PopulationHub.getAllPopHubs();
 		Missile.getAllMissilesByID();
@@ -45,7 +45,7 @@ public final class Controller implements Runnable {
 		System.out.println("Data Structures initialized!");
 		return this;
 	}
-	private Controller initPlayers() {
+	private ColdWar2100 initPlayers() {
 		int counter = 0;
 		for (Player p : getPlayers()) {
 			counter++;
@@ -56,18 +56,19 @@ public final class Controller implements Runnable {
 		}
 		return this;
 	}
-	public Controller startGame(ServerThread server) {
+	public ColdWar2100 startGame(ServerThread server) {
 		this.initPlayers();
-		do {} while (!Controller.getTurnInstance().doTurn(server));
-		Controller.winners = new ArrayList<>();
+		do {} while (!ColdWar2100.getTurnInstance().doTurn(server));
+		ColdWar2100.winners = new ArrayList<>();
 		winners.add(getPlayers().get(0));
 		return this;
 	}
 	@Override
 	public void run() {
-		this.initPlayers();
-		while(getPlayers().size() > 1) {
+		//this.initPlayers();
+		do {
 			for (Player p : getPlayers()) {
+
 				boolean continueTurn = true;
 				while (continueTurn) {
 					try {
@@ -93,8 +94,9 @@ public final class Controller implements Runnable {
 					} catch (ClassNotFoundException e) {}
 				}
 			}
-		}
-		Controller.winners = new ArrayList<>();
+			getPlayers().removeIf(Predicates.getInstance().playerDefeated());
+		} while(getPlayers().size() > 1);
+		ColdWar2100.winners = new ArrayList<>();
 		winners.add(getPlayers().get(0));
 	}
 	/**
@@ -106,9 +108,9 @@ public final class Controller implements Runnable {
 	public static ServerThread getServerInstance() { return serverInstance; }
 	public static int getNextPlayerID() { return getPlayers().size(); }
 	public static int getNumPlayers() { return numPlayers; }
-	public static ArrayList<Player> getWinners() { return Controller.winners; }
+	public static ArrayList<Player> getWinners() { return ColdWar2100.winners; }
 	public static ArrayList<Player> getPlayers () {
-		if (Controller.players == null) {
+		if (ColdWar2100.players == null) {
 			players = new ArrayList<>(numPlayers);
 			for (int i = 0; i < numPlayers; i++) {
 				players.add(new Player());
@@ -116,10 +118,10 @@ public final class Controller implements Runnable {
 		}
 		return players;
 	}
-	public static Controller getInstance() {
+	public static ColdWar2100 getInstance() {
 		if (instance == null) {
 			Integer numPlayers = Integer.valueOf(new EnterAString(EnterAStringTypes.NUM_PLAYERS, null).getText());
-			instance = new Controller(numPlayers);
+			instance = new ColdWar2100(numPlayers);
 		}
 		return instance;
 	}
@@ -130,6 +132,6 @@ public final class Controller implements Runnable {
 		return turnInstance;
 	}
 	public void setServerInstance(ServerThread serverThread) {
-		Controller.serverInstance = serverThread;
+		ColdWar2100.serverInstance = serverThread;
 	}
 }

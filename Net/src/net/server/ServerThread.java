@@ -1,6 +1,7 @@
 package net.server;
 
-import controller.Controller;
+import game.ColdWar2100;
+import net.GEP;
 
 import java.io.*;
 import java.net.Socket;
@@ -8,7 +9,7 @@ import java.net.Socket;
 /**
  * Created by hayesj3 on 5/28/2015.
  */
-public class ServerThread implements Runnable {
+public final class ServerThread implements Runnable {
 
     private Socket clientAddr;
     private BufferedReader in;
@@ -22,6 +23,7 @@ public class ServerThread implements Runnable {
         out = new BufferedWriter(new OutputStreamWriter(clientSocket.getOutputStream()));
         objectIn = new ObjectInputStream(clientSocket.getInputStream());
         objectOut = new ObjectOutputStream(clientSocket.getOutputStream());
+        GEP.sendEvent(out, GEP.EnumEvents.WELCOME);
     }
     public void write(String message) throws IOException { out.write(message); }
     public String read() throws IOException { return in.readLine(); }
@@ -63,9 +65,16 @@ public class ServerThread implements Runnable {
 
     @Override
     public void run() {
-        Controller.getInstance().setServerInstance(this);
-        Controller.getInstance().run();
-        System.out.println("Winner is: " + Controller.getWinners().get(0));
+        ColdWar2100.getInstance().setServerInstance(this);
+        ColdWar2100.getInstance().run();
+        do {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                //e.printStackTrace();
+            }
+        } while (ColdWar2100.getWinners() == null);
+        System.out.println("Winner is: " + ColdWar2100.getWinners().get(0));
         notifyAll();
     }
 

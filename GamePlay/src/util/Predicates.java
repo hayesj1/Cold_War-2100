@@ -16,6 +16,7 @@ public final class Predicates {
 
     public Predicate<PopulationHub> popHubsOwnedByPlayer(Player player) { return ph -> ph.getOwner().equals(player); }
     public Predicate<PopulationHub> ruinedPopHubs() { return ph -> ph.getRuined(); }
+    public Predicate<Player> playerDefeated() { return p -> p.getOwnedCities().stream().allMatch(ruinedPopHubs()); }
 
     public static Predicates getInstance() {
         if (instance == null) {

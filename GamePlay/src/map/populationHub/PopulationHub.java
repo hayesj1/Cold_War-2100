@@ -1,6 +1,6 @@
 package map.populationHub;
 
-import controller.Controller;
+import game.ColdWar2100;
 import gui.EnterAString;
 import gui.EnterAStringTypes;
 import player.Player;
@@ -147,7 +147,7 @@ public final class PopulationHub implements IPopulationHub, Serializable {
     public static ArrayList<PopulationHub> getAllPopHubsByPlayer(Player p) {
         if (allPopHubsByPlayer == null) {
             allPopHubsByPlayer = new TreeMap<>();
-            for (Player player : Controller.getPlayers()) allPopHubsByPlayer.put(player, player.getOwnedCities());
+            for (Player player : ColdWar2100.getPlayers()) allPopHubsByPlayer.put(player, player.getOwnedCities());
         }
         return ((p == null) ? null : allPopHubsByPlayer.get(p));
     }
@@ -163,7 +163,7 @@ public final class PopulationHub implements IPopulationHub, Serializable {
         return missilesBasedHere;
     }
     public static ArrayList<PopulationHub> getAllPopHubs() {
-        if (allPopHubs == null) { allPopHubs = new ArrayList<>(Controller.getNumPlayers()); }
+        if (allPopHubs == null) { allPopHubs = new ArrayList<>(ColdWar2100.getNumPlayers()); }
         return allPopHubs;
     }
 

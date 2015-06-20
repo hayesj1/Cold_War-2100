@@ -1,5 +1,7 @@
 package net.server;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -10,7 +12,7 @@ import java.util.Enumeration;
 /**
  * Created by hayesj3 on 5/19/2015.
  */
-public class Server {
+public final class Server {
     private ServerSocket listener;
     public static final int PORT = 55655;
     public static final int LOCAL_PORT = 8080;
@@ -54,8 +56,14 @@ public class Server {
         }
         return serverIP;
     }
-    public static void main(String[] args) {
-
+    public static void main(String[] args) throws InvalidArgumentException, IOException {
+        if (args.length != 1) {
+            System.out.println("java -jar Cold_War_2100.jar " + Server.PORT);
+            throw new InvalidArgumentException(new String[] {"Server must have the port number ( " + Server.PORT + ") passed as an argument!"} );
+        }
+        Server server = new Server(Integer.valueOf(args[0]));
+        System.out.println("serverIP = " + server.getServerAddress());
+        server.listen();
     }
 
 }

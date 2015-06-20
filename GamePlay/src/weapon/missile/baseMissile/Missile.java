@@ -1,6 +1,6 @@
 package weapon.missile.baseMissile;
 
-import controller.Controller;
+import game.ColdWar2100;
 import map.populationHub.PopulationHub;
 import player.Player;
 import resource.Resources;
@@ -53,12 +53,12 @@ public abstract class Missile implements IMissile, Comparable<Missile> {
 	/**
 	 *
 	 * @param player the player whose missiles are to be gotten
-	 * @return null if player is null; otherwise the arrayList of missiles controller by player
+	 * @return null if player is null; otherwise the arrayList of missiles game by player
 	 */
 	public static ArrayList<IMissile> getAllMissilesByPlayer(Player player) {
 		if (allMissilesByPlayer == null) {
 			allMissilesByPlayer = new TreeMap<Player, ArrayList<IMissile>>();
-			for (Player p : Controller.getPlayers())
+			for (Player p : ColdWar2100.getPlayers())
 				allMissilesByPlayer.put(p, new ArrayList<>(5));
 		}
 		return (player == null) ? null : allMissilesByPlayer.get(player);

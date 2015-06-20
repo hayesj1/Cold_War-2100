@@ -7,7 +7,7 @@ import java.io.IOException;
 /**
  * Created by hayesj3 on 5/19/2015.
  * <p>
- * GEP (pronounced jep) stands for Game Event Protocol and is used to send event between clients and servers.
+ * GEP (pronounced jep) stands for Game Event Protocol and is used to send events between clients and servers.
  */
 public final class GEP {
 
@@ -22,6 +22,28 @@ public final class GEP {
     public static String readEvent(BufferedReader in) throws IOException {
         return (new String(in.readLine()));
     }
+
+	/**
+	 * Enum for all the events that can occur pre-game, during the game, and post-game. <br>
+	 *     <p>
+	 *          The Server -> Client Events are:<br>
+	 *          &nbsp WELCOME<br>
+	 *          &nbsp MOVED_MISSLE<br>
+	 *          &nbsp POPHUB_STRUCK<br>
+	 *          &nbsp POPHUB_DESTROYED<br>
+	 *          &nbsp DEFEAT<br>
+	 *          &nbsp VICTOR<br>
+	 *     </p>
+	 *     <p>
+	 *          The Client -> ServerEvents are:<br>
+	 *          &nbsp FOUNDED<br>
+	 *          &nbsp ATTACKED<br>
+	 *          &nbsp END_TURN<br>
+	 *     </p>
+	 *     <p>
+	 *         Events
+	 *     </p>
+	 */
     public enum EnumEvents {
         WELCOME("Welcome to the Cold War!", "The year is 2100, and with the Cold war nearing it's 200th Anniversary tensions are at an all time high.\n" +
                 "Nuclear war seems just over the horizon, and new commanders have been appointed to oversee nuclear operations.\n\n" +

@@ -1,6 +1,6 @@
 package gui;
 
-import controller.Controller;
+import game.ColdWar2100;
 import map.populationHub.PopulationHub;
 import net.server.Server;
 import player.Player;
@@ -79,8 +79,8 @@ public class AttackPopHubScreen extends JDialog {
     }
 
     public static void main(String[] args) throws IOException {
-        Controller.getInstance().startGame(new net.server.ServerThread(new Socket(InetAddress.getLoopbackAddress(), Server.PORT)));
-        AttackPopHubScreen dialog = new AttackPopHubScreen(Controller.getPlayers().get(0));
+        ColdWar2100.getInstance().startGame(new net.server.ServerThread(new Socket(InetAddress.getLoopbackAddress(), Server.PORT)));
+        AttackPopHubScreen dialog = new AttackPopHubScreen(ColdWar2100.getPlayers().get(0));
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
