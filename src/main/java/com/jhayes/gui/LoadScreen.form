@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="main.java.com.jhayes.gui.LoadScreen">
+  <grid id="cbd77" binding="contentPane" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+    <constraints>
+      <xy x="48" y="54" width="709" height="466"/>
+    </constraints>
+    <properties>
+      <enabled value="true"/>
+      <font name="Dialog"/>
+      <foreground color="-1"/>
+      <inheritsPopupMenu value="true"/>
+      <maximumSize width="-1" height="-1"/>
+      <minimumSize width="-1" height="-1"/>
+      <toolTipText value=""/>
+    </properties>
+    <clientProperties>
+      <html.disable class="java.lang.Boolean" value="false"/>
+    </clientProperties>
+    <border type="none"/>
+    <children>
+      <grid id="e3588" binding="mainWindow" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+        <margin top="0" left="0" bottom="0" right="0"/>
+        <constraints/>
+        <properties/>
+        <border type="none"/>
+        <children>
+          <grid id="91ab0" binding="consolePane" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="0" right="0"/>
+            <constraints>
+              <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="true">
+                <preferred-size width="500" height="365"/>
+              </grid>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <scrollpane id="8ee03">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                    <preferred-size width="500" height="350"/>
+                    <maximum-size width="500" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="3cd7c" class="javax.swing.JTextArea" binding="console" custom-create="true">
+                    <constraints/>
+                    <properties>
+                      <background color="-16777216"/>
+                      <caretColor color="-16725761"/>
+                      <columns value="50"/>
+                      <disabledTextColor color="-16733953"/>
+                      <editable value="false"/>
+                      <font swing-font="TextArea.font"/>
+                      <foreground color="-16711868"/>
+                      <lineWrap value="true"/>
+                      <minimumSize width="500" height="350"/>
+                      <preferredSize width="500" height="300"/>
+                      <rows value="1"/>
+                      <selectedTextColor color="-16777216"/>
+                      <selectionColor color="-16725761"/>
+                      <tabSize value="4"/>
+                      <wrapStyleWord value="false"/>
+                    </properties>
+                    <clientProperties>
+                      <caretWidth class="java.lang.Integer" value="5"/>
+                    </clientProperties>
+                  </component>
+                </children>
+              </scrollpane>
+              <grid id="5a0d5" binding="loadingStuff" layout-manager="GridLayoutManager" row-count="2" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+                <margin top="0" left="0" bottom="0" right="0"/>
+                <constraints>
+                  <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="true">
+                    <preferred-size width="500" height="-1"/>
+                  </grid>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children>
+                  <component id="e7a4b" class="javax.swing.JProgressBar" binding="loadingBar" custom-create="true">
+                    <constraints>
+                      <grid row="1" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
+                        <preferred-size width="500" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <background color="-16777216"/>
+                      <borderPainted value="false"/>
+                      <enabled value="true"/>
+                      <font swing-font="ProgressBar.font"/>
+                      <foreground color="-16711868"/>
+                      <indeterminate value="true"/>
+                      <orientation value="0"/>
+                      <string value="Loading" noi18n="true"/>
+                      <stringPainted value="true"/>
+                      <toolTipText value="Loading"/>
+                    </properties>
+                  </component>
+                  <component id="75077" class="javax.swing.JTextField" binding="commandEntry">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="0" indent="0" use-parent-layout="false">
+                        <preferred-size width="425" height="15"/>
+                      </grid>
+                    </constraints>
+                    <properties/>
+                  </component>
+                  <component id="2879f" class="javax.swing.JButton" binding="enterCmd">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false">
+                        <preferred-size width="50" height="-1"/>
+                      </grid>
+                    </constraints>
+                    <properties>
+                      <text value="Enter"/>
+                    </properties>
+                  </component>
+                  <component id="cf39d" class="javax.swing.JButton" binding="play">
+                    <constraints>
+                      <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <enabled value="false"/>
+                      <text value="Play"/>
+                      <toolTipText value="Loading!"/>
+                    </properties>
+                  </component>
+                </children>
+              </grid>
+            </children>
+          </grid>
+          <grid id="5d1f7" binding="logoPanel" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+            <margin top="0" left="0" bottom="1" right="0"/>
+            <constraints>
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+            </constraints>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="28053" class="javax.swing.JLabel" binding="logo" custom-create="true">
+                <constraints>
+                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="2" hsize-policy="0" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <text value=""/>
+                </properties>
+              </component>
+            </children>
+          </grid>
+        </children>
+      </grid>
+    </children>
+  </grid>
+</form>

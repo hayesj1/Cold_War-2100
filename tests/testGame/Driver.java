@@ -1,9 +1,9 @@
 package testGame;
 
-import game.ColdWar2100;
-import net.client.Client;
-import net.server.Server;
-import net.server.ServerThread;
+import main.java.com.jhayes.game.ColdWar2100;
+import main.java.com.jhayes.net.client.Client;
+import main.java.com.jhayes.net.server.Server;
+import main.java.com.jhayes.net.server.ServerThread;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -20,7 +20,7 @@ public class Driver {
 	}
 	private void localGame() {
 		try {
-			Server server = new Server();
+			Server server = Server.getInstance(2);
 			ServerThread serverThread = new ServerThread();
 			ColdWar2100 game = new ColdWar2100(serverThread);
 			Thread threadedServer = new Thread(new ThreadGroup("Server"), server, "server");
@@ -40,7 +40,7 @@ public class Driver {
 	}
 	private void networkedGame() {
 		try {
-			Client client = new Client();
+			Client client = Client.getInstance();
 			client.connect(InetAddress.getByName(JOptionPane.showInputDialog("Enter the IP Address of the server:")));
 			if (client.connected()) {
 				System.out.println("Connected!");

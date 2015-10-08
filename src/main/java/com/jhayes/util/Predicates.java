@@ -1,0 +1,27 @@
+package main.java.com.jhayes.util;
+
+import main.java.com.jhayes.map.populationHub.PopulationHub;
+import main.java.com.jhayes.player.Player;
+
+import java.util.function.Predicate;
+
+/**
+ * Created by hayesj3 on 5/3/2015.
+ *
+ * Holds useful predicates for functions
+ */
+public final class Predicates {
+    private static Predicates instance;
+    private Predicates() {}
+
+    public Predicate<PopulationHub> popHubsOwnedByPlayer(Player player) { return ph -> ph.getOwner().equals(player); }
+    public Predicate<PopulationHub> ruinedPopHubs() { return ph -> ph.getRuined(); }
+    public Predicate<Player> playerDefeated() { return p -> p.getOwnedCities().stream().allMatch(ruinedPopHubs()); }
+
+    public static Predicates getInstance() {
+        if (instance == null) {
+            instance = new Predicates();
+        }
+        return instance;
+    }
+}
