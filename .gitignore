@@ -246,3 +246,10 @@ lib/image4j/docs/javadocs/javadoc/package-list
 cold_war-2100.properties
 cold_war-2100.xml
 GamePlay/module_gameplay.xml
+.idea/artifacts/Cold_War_2100_Server.xml
+.idea/artifacts/Cold_War_2100_Client.xml
+lib/bsh-util-2.0b4.jar
+temp_resources/missile 1.jpg
+temp_resources/missile 3.png
+temp_resources/missile 2.png
+vecmath-1_5_2-src.zip
